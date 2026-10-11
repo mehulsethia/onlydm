@@ -1,7 +1,6 @@
 /** Ordered onboarding steps (files under app/(onboarding), then the paywall). Pure, no React. */
 export const ONBOARDING_STEPS = [
   'cold-open',
-  'pick-apps',
   'total-time',
   'talking-time',
   'receipt',

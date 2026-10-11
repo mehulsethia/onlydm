@@ -9,15 +9,23 @@ import { contactHref, site } from '@/lib/site';
 const FAQ = [
   {
     q: 'What is OnlyDM, exactly?',
-    a: 'An app that opens the real Instagram, Threads and Facebook websites with the feed, Reels and Explore hidden. Messages, group chats and your friends’ stories work as normal.',
+    a: 'An app that opens Instagram straight to your messages, with the feed, Reels and Explore hidden. DMs, group chats and your friends’ stories work as normal.',
   },
   {
     q: 'Does OnlyDM see my password or my messages?',
-    a: 'No. You sign in on the platform’s own page, and OnlyDM never reads, stores or sends your password, cookies or messages. We don’t run servers that hold your data.',
+    a: 'No. You sign in on Instagram’s own page, and OnlyDM never reads, stores or sends your password, cookies or messages. We don’t run servers that hold your data.',
   },
   {
     q: 'Can I still see a post a friend sends me?',
     a: 'Yes. A post or reel shared in a chat opens on its own. When you close it, you’re back in your messages, not the feed.',
+  },
+  {
+    q: 'Can I delete Instagram and still keep my group chats?',
+    a: 'That’s the idea. Use OnlyDM for your messages and delete the Instagram app, so the feed and Reels are no longer one tap away. Your chats, requests and event invites are all still there.',
+  },
+  {
+    q: 'Does it work with Threads or Facebook?',
+    a: 'Instagram is what OnlyDM is built for. If you also want Threads or Facebook messages, you can add them later from Settings.',
   },
   {
     q: 'Is this made by Instagram or Meta?',

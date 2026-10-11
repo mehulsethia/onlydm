@@ -18,9 +18,9 @@ export const site = {
   /** Used in titles and share previews. */
   headline: 'Quit the scroll. Keep your people.',
   description:
-    'Only DMs, zero distractions. OnlyDM opens Instagram, Threads and Facebook straight to your messages. No feed, no Reels, no Explore.',
+    'Only DMs, zero distractions. OnlyDM opens Instagram straight to your messages. No feed, no Reels, no Explore.',
   /** Public URL of the site, used for share previews and canonical links. */
-  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://getonlydm.com').replace(/\/+$/, ''),
+  url: (process.env.NEXT_PUBLIC_SITE_URL || 'https://www.getonlydm.com').replace(/\/+$/, ''),
   /** App Store and Google Play listings. While unset, "Get OnlyDM" asks for early access by email. */
   appStoreUrl: appStoreId ? `https://apps.apple.com/app/onlydm/id${appStoreId}` : '',
   playStoreUrl: playLive ? `https://play.google.com/store/apps/details?id=${APP_ID}` : '',

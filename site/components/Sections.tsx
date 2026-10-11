@@ -1,7 +1,7 @@
 import { founder } from '@/content/founder';
 import { proof, rating } from '@/content/proof';
 import { PlatformIcons } from './PlatformIcons';
-import { PLATFORM_ORDER, PlatformLogo, platformName } from './PlatformLogo';
+import { PlatformLogo } from './PlatformLogo';
 import { Reveal } from './Reveal';
 import { AndroidButton, PrimaryButton, TrialNote } from './StoreButtons';
 
@@ -159,16 +159,18 @@ export function HowItWorks() {
         <div className="steps">
           <Reveal className="step">
             <MiniPhone>
-              {PLATFORM_ORDER.map((p) => (
-                <div className="toggle-row" key={p}>
-                  <PlatformLogo platform={p} size={28} />
-                  <span className="grow">{platformName(p)}</span>
-                  <span className="toggle" />
-                </div>
-              ))}
+              <div style={{ display: 'grid', gap: 10, textAlign: 'center', paddingTop: 18 }}>
+                <span className="dim" style={{ fontSize: 10 }}>Time a day on Instagram</span>
+                <strong style={{ fontSize: 26, fontVariantNumeric: 'tabular-nums' }}>3 h 00 min</strong>
+                <span style={{ height: 4, borderRadius: 2, background: 'rgba(10,10,10,0.1)', position: 'relative', margin: '8px 6px' }}>
+                  <span style={{ position: 'absolute', inset: '0 60% 0 0', background: '#0A0A0A', borderRadius: 2 }} />
+                  <span style={{ position: 'absolute', left: '40%', top: -6, width: 16, height: 16, borderRadius: 8, background: '#0A0A0A', border: '3px solid #fff' }} />
+                </span>
+              </div>
             </MiniPhone>
             <span className="step-num">01</span>
-            <h3>Pick your apps</h3>
+            <h3>See what it costs you</h3>
+            <p>Two quick questions show how much time goes to scrolling, not talking.</p>
           </Reveal>
           <Reveal className="step" delay={0.08}>
             <MiniPhone>
@@ -184,14 +186,14 @@ export function HowItWorks() {
             </MiniPhone>
             <span className="step-num">02</span>
             <h3>Sign in on their page</h3>
-            <p>You sign in on Instagram’s, Threads’ or Facebook’s own page, inside OnlyDM.</p>
+            <p>You sign in on Instagram’s own page, inside OnlyDM.</p>
           </Reveal>
           <Reveal className="step" delay={0.16}>
             <MiniPhone dark>
               {[
                 { n: 'Maya', m: 'you free sat?', p: 'instagram' as const },
-                { n: 'Mum', m: 'call me when you’re free', p: 'facebook' as const },
-                { n: 'Sam', m: 'voice message 0:14', p: 'threads' as const },
+                { n: 'Mum', m: 'call me when you’re free', p: 'instagram' as const },
+                { n: 'Sam', m: 'voice message 0:14', p: 'instagram' as const },
               ].map((c, i) => (
                 <div className="chat" key={c.n}>
                   <span className="chat-av">
@@ -222,7 +224,7 @@ export function HowItWorks() {
 /* ---------- Privacy (black) ---------- */
 
 const POINTS = [
-  { t: 'Their sign-in page, not ours', b: 'You sign in on Instagram’s, Threads’ or Facebook’s own page, inside OnlyDM.' },
+  { t: 'Their sign-in page, not ours', b: 'You sign in on Instagram’s own page, inside OnlyDM.' },
   { t: 'Nothing stored on our servers', b: 'Your messages and session stay on your phone.' },
   { t: 'No analytics, no ads', b: 'OnlyDM doesn’t track what you do. There’s nothing to sell, so nothing is collected.' },
   { t: 'Sign out any time in Settings', b: 'One tap in Settings signs you out and clears everything OnlyDM kept on your phone.' },
@@ -324,8 +326,8 @@ export function Closing() {
           </div>
           <TrialNote />
           <div className="platforms-row">
-            <PlatformIcons on="dark" />
-            <span className="label">Works with Instagram, Threads and Facebook</span>
+            <PlatformIcons on="dark" only={['instagram']} label="Built for" />
+            <span className="label">Built for Instagram DMs</span>
           </div>
         </Reveal>
       </div>

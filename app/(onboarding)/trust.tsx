@@ -9,9 +9,8 @@ import { GlassCard } from '@/components/GlassCard';
 import { Screen } from '@/components/Screen';
 import type { PlatformId } from '@/rules/types';
 import { progressFor } from '@/state/onboardingSteps';
-import { PLATFORM_META, PICK_ORDER } from '@/state/platformMeta';
+import { PLATFORM_META, PRIMARY_PLATFORM } from '@/state/platformMeta';
 import { isSignedInTo } from '@/state/platforms';
-import { readProgress } from '@/state/progress';
 import { colors, spacing } from '@/theme/tokens';
 
 const ROWS = [
@@ -20,40 +19,26 @@ const ROWS = [
   { Icon: ExitIcon, text: 'Sign out any time in Settings' },
 ];
 
-function status() {
-  const picked = readProgress().picked;
-  const order = picked.length ? picked : [PICK_ORDER[0]];
-  return {
-    pending: order.filter((id) => !isSignedInTo(id)),
-    connected: order.filter(isSignedInTo),
-    last: order[order.length - 1],
-  };
-}
-
-/** Sign in to each picked app in order. After the first, offer the next one with "Later"; never force all. */
+/** Onboarding signs in to Instagram only. Threads and Facebook are optional, from Settings. */
 export default function Trust() {
   const router = useRouter();
   const { signedIn } = useLocalSearchParams<{ signedIn?: PlatformId }>();
-  const [s, setS] = useState(status);
-  const advanced = useRef<string | undefined>(undefined);
+  const [connected, setConnected] = useState(() => isSignedInTo(PRIMARY_PLATFORM));
+  const advanced = useRef(false);
 
-  useFocusEffect(useCallback(() => setS(status()), []));
+  useFocusEffect(useCallback(() => setConnected(isSignedInTo(PRIMARY_PLATFORM)), []));
 
-  // Just finished the last pending sign-in: go straight on to the reveal.
+  // Just signed in: go straight on to the reveal.
   useEffect(() => {
-    if (signedIn && advanced.current !== signedIn && s.pending.length === 0) {
-      advanced.current = signedIn;
+    if (signedIn && connected && !advanced.current) {
+      advanced.current = true;
       router.push('/(onboarding)/reveal');
     }
-  }, [signedIn, s.pending.length, router]);
+  }, [signedIn, connected, router]);
 
-  const next = s.pending[0];
-  const shown = next ?? s.last;
-  const { label, domain } = PLATFORM_META[shown];
-  const adding = s.connected.length > 0;
-
-  const signIn = () => next && router.push({ pathname: '/(onboarding)/login', params: { platform: next } });
-  const later = () => router.push('/(onboarding)/reveal');
+  const { label, domain } = PLATFORM_META[PRIMARY_PLATFORM];
+  const signIn = () => router.push({ pathname: '/(onboarding)/login', params: { platform: PRIMARY_PLATFORM } });
+  const next = () => router.push('/(onboarding)/reveal');
 
   return (
     <Screen
@@ -72,18 +57,7 @@ export default function Trust() {
           ))}
         </GlassCard>
       }
-      footer={
-        !next ? (
-          <Button label="Next" onPress={later} />
-        ) : adding ? (
-          <>
-            <Button label={`Add ${label}`} onPress={signIn} />
-            <Button label="Later" variant="ghost" onPress={later} />
-          </>
-        ) : (
-          <Button label={`Sign in on ${domain}`} onPress={signIn} />
-        )
-      }
+      footer={connected ? <Button label="Next" onPress={next} /> : <Button label={`Sign in on ${domain}`} onPress={signIn} />}
     >
       <View style={{ gap: spacing.lg }}>
         <AnimatedHeadline>{`You sign in on ${label}'s own page.`}</AnimatedHeadline>

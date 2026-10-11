@@ -6,19 +6,17 @@ import { OnlyDMMark } from './OnlyDMMark';
 import { Wordmark } from './Wordmark';
 
 /**
- * The hero phone, as a short story on a loop: the usual feed, then OnlyDM wipes in on its Instagram tab,
- * then Threads, then Facebook. The chat screens follow each site's real inbox layout with invented people.
+ * The hero phone, as a short story on a loop: the usual feed, then OnlyDM wipes in on Instagram's messages.
+ * The chat screen follows the real inbox layout with invented people.
  * Reduce Motion: no autoplay; it rests on Instagram.
  */
 
-type Step = 'feed' | 'instagram' | 'threads' | 'facebook';
+type Step = 'feed' | 'instagram';
 const STEPS: { id: Step; label: string; ms: number }[] = [
   { id: 'feed', label: 'The usual way', ms: 2800 },
   { id: 'instagram', label: 'Instagram', ms: 3400 },
-  { id: 'threads', label: 'Threads', ms: 3400 },
-  { id: 'facebook', label: 'Facebook', ms: 3400 },
 ];
-const PLATFORMS: Step[] = ['instagram', 'threads', 'facebook'];
+const PLATFORMS: Step[] = ['instagram'];
 
 /* ---------- The usual way: a generic feed, drawn in greyscale ---------- */
 
@@ -214,106 +212,8 @@ function InstagramScreen() {
   );
 }
 
-/* ---------- Threads (light), after the real messages page ---------- */
-
-const TH_CHATS = [
-  { name: 'lena.draws', msg: 'Okay', time: '2d' },
-  { name: 'milo_.k', msg: 'Have you seen this', time: '3d' },
-  { name: 'sana.writes', msg: 'You sent a post', time: '3d' },
-  { name: 'theo.r', msg: 'Good morning ☀️ see you at 10', time: '1w' },
-  { name: 'june.wav', msg: 'You sent a post', time: '1w' },
-  { name: 'ravi.makes', msg: 'haha yes', time: '2w' },
-  { name: 'cleo_', msg: 'Sent a photo', time: '2w' },
-  { name: 'oscar.p', msg: 'You: thanks!', time: '3w' },
-  { name: 'maya.k', msg: 'Reacted ❤️ to your message', time: '4w' },
-];
-
-function ThreadsScreen() {
-  return (
-    <div className="dm-screen th">
-      <div className="th-head">
-        <span className="th-title">Messages</span>
-        <Icon d={COMPOSE} size={20} />
-      </div>
-      <div className="dm-search">
-        <Icon d={SEARCH} size={14} /> Search
-      </div>
-      <div className="th-pills">
-        <span className="on">Inbox</span>
-        <span>Requests</span>
-      </div>
-      {TH_CHATS.map((c, i) => (
-        <div className="dm-row" key={c.name}>
-          <Face size={36} i={i + 9} />
-          <span className="dm-text">
-            <span className="dm-name">{c.name}</span>
-            <span className="dm-msg">
-              {c.msg} · {c.time}
-            </span>
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
-/* ---------- Facebook (light), after the real Chats page ---------- */
-
-const FB_CHATS = [
-  { name: 'Noah Fischer', msg: 'Are we still on for Sunday?', time: '1h' },
-  { name: 'Priya Nair', msg: 'You: Happy birthday!! 🎉', time: '1h' },
-  { name: 'Dev, Aria and Kai', msg: 'You: What’s up w you guys?', time: '1h', online: true, group: true },
-  { name: 'Leo Martins', msg: 'Hello', time: '1d', reply: true },
-  { name: 'Ana Costa', msg: 'Messages and calls are secured…', time: '7w', online: true },
-  { name: 'Mum', msg: 'Call me when you’re free', time: '8w' },
-  { name: 'Sunday football', msg: 'Jay: same time next week?', time: '9w', group: true },
-  { name: 'Hana Ito', msg: 'You: Thank you so much!', time: '10w' },
-  { name: 'Ben Carter', msg: 'Sounds good', time: '12w' },
-];
-
-function FacebookScreen() {
-  return (
-    <div className="dm-screen fb">
-      <div className="fb-head">
-        <span className="fb-title">Chats</span>
-        <span className="fb-actions">
-          <span className="fb-circle">
-            <Icon d="M5 12h.01M12 12h.01M19 12h.01" size={16} />
-          </span>
-          <span className="fb-circle">
-            <Icon d={COMPOSE} size={15} />
-          </span>
-        </span>
-      </div>
-      <div className="dm-search fb-search">
-        <Icon d={SEARCH} size={14} /> Search Messenger
-      </div>
-      <div className="fb-pills">
-        <span className="on">All</span>
-        <span>Unread</span>
-        <span>Groups</span>
-        <span>Communities</span>
-      </div>
-      {FB_CHATS.map((c, i) => (
-        <div className="dm-row" key={c.name}>
-          <Face size={36} i={i + 17} online={c.online} group={'group' in c && c.group} />
-          <span className="dm-text">
-            <span className="dm-name">{c.name}</span>
-            <span className="dm-msg">
-              {c.msg} · {c.time}
-              {c.reply ? <span className="fb-reply"> · Reply?</span> : null}
-            </span>
-          </span>
-        </div>
-      ))}
-    </div>
-  );
-}
-
 const SCREENS: Record<Exclude<Step, 'feed'>, () => JSX.Element> = {
   instagram: InstagramScreen,
-  threads: ThreadsScreen,
-  facebook: FacebookScreen,
 };
 
 /* ---------- OnlyDM chrome around the screens ---------- */
@@ -327,14 +227,13 @@ function OnlyDMApp({ active }: { active: Step }) {
           <OnlyDMMark size={18} on="dark" />
           <Wordmark />
         </span>
-        <span className="dm-settings">Settings</span>
-      </div>
-      <div className="dm-tabs">
-        {PLATFORMS.map((p, i) => (
-          <span key={p} className={`dm-tab${i === index ? ' on' : ''}`}>
-            {p === 'instagram' ? 'Instagram' : p === 'threads' ? 'Threads' : 'Facebook'}
-          </span>
-        ))}
+        <svg className="dm-settings" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-label="Settings">
+          <circle cx="12" cy="12" r="6.4" />
+          <circle cx="12" cy="12" r="2.4" />
+          {[0, 45, 90, 135].map((d) => (
+            <path key={d} d="M12 2.6v2.6M12 18.8v2.6" strokeWidth="2.6" transform={`rotate(${d} 12 12)`} />
+          ))}
+        </svg>
       </div>
       <div className="dm-stage">
         {PLATFORMS.map((p, i) => {

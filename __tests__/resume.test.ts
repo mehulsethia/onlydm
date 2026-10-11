@@ -5,11 +5,10 @@ const base: ProgressSnapshot = {
   signedIn: false,
   onboardingComplete: false,
   step: null,
-  hasApps: false,
   totalMinutes: null,
   talkingMinutes: null,
 };
-const answered: Partial<ProgressSnapshot> = { hasApps: true, totalMinutes: 180, talkingMinutes: 10 };
+const answered: Partial<ProgressSnapshot> = { totalMinutes: 180, talkingMinutes: 10 };
 const at = (over: Partial<ProgressSnapshot>) => resolveStartRoute({ ...base, ...over });
 
 describe('resolveStartRoute', () => {
@@ -23,7 +22,7 @@ describe('resolveStartRoute', () => {
 
   it('resumes at the last step reached', () => {
     expect(at({ ...answered, step: 'refund' })).toBe('/(onboarding)/refund');
-    expect(at({ step: 'pick-apps' })).toBe('/(onboarding)/pick-apps');
+    expect(at({ step: 'total-time' })).toBe('/(onboarding)/total-time');
   });
 
   it('ignores unknown stored steps', () => {
@@ -31,14 +30,13 @@ describe('resolveStartRoute', () => {
   });
 
   it('goes back for missing answers', () => {
-    expect(at({ step: 'receipt' })).toBe('/(onboarding)/pick-apps');
-    expect(at({ step: 'receipt', hasApps: true })).toBe('/(onboarding)/total-time');
-    expect(at({ step: 'receipt', hasApps: true, totalMinutes: 60 })).toBe('/(onboarding)/talking-time');
-    expect(at({ step: 'trust', hasApps: false, totalMinutes: 60, talkingMinutes: 5 })).toBe('/(onboarding)/pick-apps');
+    expect(at({ step: 'receipt' })).toBe('/(onboarding)/total-time');
+    expect(at({ step: 'receipt', totalMinutes: 60 })).toBe('/(onboarding)/talking-time');
+    expect(at({ step: 'trust', totalMinutes: 60, talkingMinutes: 5 })).toBe('/(onboarding)/trust');
   });
 
   it('skips year and refund for someone mostly here to talk', () => {
-    const talker = { hasApps: true, totalMinutes: 45, talkingMinutes: 30 };
+    const talker = { totalMinutes: 45, talkingMinutes: 30 };
     expect(at({ ...talker, step: 'year' })).toBe('/(onboarding)/whats-left');
     expect(at({ ...talker, step: 'refund' })).toBe('/(onboarding)/whats-left');
     expect(at({ ...talker, step: 'receipt' })).toBe('/(onboarding)/receipt');
@@ -49,7 +47,7 @@ describe('resolveStartRoute', () => {
   });
 
   it('skips earlier screens once signed in', () => {
-    expect(at({ ...answered, signedIn: true, step: 'pick-apps' })).toBe('/(onboarding)/trust');
+    expect(at({ ...answered, signedIn: true, step: 'total-time' })).toBe('/(onboarding)/trust');
     expect(at({ signedIn: true, step: null })).toBe('/(onboarding)/trust');
   });
 

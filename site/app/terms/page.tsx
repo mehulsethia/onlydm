@@ -55,7 +55,7 @@ export default function Terms() {
         </li>
       </ul>
 
-      <h2>Instagram, Threads and Facebook</h2>
+      <h2>Instagram and Meta</h2>
       <p>
         OnlyDM is not affiliated with, endorsed by, or sponsored by Instagram, Threads, Facebook or Meta Platforms, Inc. You
         need your own accounts, and your use of them inside OnlyDM remains governed by their own terms. OnlyDM shows their
@@ -71,7 +71,7 @@ export default function Terms() {
 
       <h2>No warranty</h2>
       <p>
-        OnlyDM is provided as is, without warranty of any kind. We are not liable for anything Instagram, Threads or Facebook
+        OnlyDM is provided as is, without warranty of any kind. We are not liable for anything Instagram (or Threads or Facebook, if you add them)
         do to your account, for messages you send or receive, or for interruptions caused by changes to their websites. As
         far as the law allows, our total liability to you is limited to what you paid for OnlyDM in the 12 months before a
         claim. Nothing here limits rights you have under consumer law that can’t be excluded.

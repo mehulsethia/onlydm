@@ -9,7 +9,6 @@ export default function Index() {
     signedIn: p.signedIn,
     onboardingComplete: p.onboardingComplete,
     step: p.step,
-    hasApps: p.picked.length > 0,
     totalMinutes: p.totalMinutes,
     talkingMinutes: p.talkingMinutes,
   });

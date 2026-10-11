@@ -15,8 +15,8 @@ import { FEATURE_LOCK_INSTAGRAM_APP } from '@/lock/flag';
 import { cancelTrialReminder } from '@/notifications/trialReminder';
 import { formatDate, MANAGE_SUBSCRIPTIONS_URL } from '@/purchases';
 import { usePayments } from '@/purchases/PaymentsProvider';
-import { getActivePack, PLATFORM_IDS } from '@/rules/store';
-import { platformLabel } from '@/state/platformMeta';
+import { getActivePack } from '@/rules/store';
+import { EXTRA_PLATFORMS, platformLabel, PRIMARY_PLATFORM } from '@/state/platformMeta';
 import { disconnectPlatform } from '@/state/disconnect';
 import { connectedPlatforms } from '@/state/platforms';
 import type { PlatformId } from '@/rules/types';
@@ -137,10 +137,25 @@ export default function Settings() {
     );
   };
 
+  const accountRow = (id: PlatformId, last: boolean) => {
+    const name = platformLabel(id);
+    const on = connected.includes(id);
+    return (
+      <Row
+        key={id}
+        label={on ? name : `Connect ${name}`}
+        detail={on ? 'Connected' : 'Sign in on its own page'}
+        onPress={on ? undefined : () => router.push({ pathname: '/(onboarding)/login', params: { platform: id } })}
+        action={on ? { label: 'Disconnect', onPress: () => disconnect(id), accessibilityLabel: `Disconnect ${name}` } : undefined}
+        last={last}
+      />
+    );
+  };
+
   const signOut = () =>
     Alert.alert(
       'Sign out of everything?',
-      'This disconnects Instagram, Threads and Facebook, clears your OnlyDM answers from this phone and starts OnlyDM from the beginning. Your subscription is not affected.',
+      'This disconnects Instagram and any other accounts you added, clears your OnlyDM answers from this phone and starts OnlyDM from the beginning. Your subscription is not affected.',
       [
         { text: 'Cancel', style: 'cancel' },
         {
@@ -181,21 +196,12 @@ export default function Settings() {
           )}
         </Section>
 
-        <Section title="Accounts">
-          {PLATFORM_IDS.map((id, i) => {
-            const name = platformLabel(id);
-            const on = connected.includes(id);
-            return (
-              <Row
-                key={id}
-                label={on ? name : `Connect ${name}`}
-                detail={on ? 'Connected' : 'Sign in on its own page'}
-                onPress={on ? undefined : () => router.push({ pathname: '/(onboarding)/login', params: { platform: id } })}
-                action={on ? { label: 'Disconnect', onPress: () => disconnect(id), accessibilityLabel: `Disconnect ${name}` } : undefined}
-                last={i === PLATFORM_IDS.length - 1}
-              />
-            );
-          })}
+        <Section title="Instagram">
+          {accountRow(PRIMARY_PLATFORM, true)}
+        </Section>
+
+        <Section title="More accounts (optional)">
+          {EXTRA_PLATFORMS.map((id, i) => accountRow(id, i === EXTRA_PLATFORMS.length - 1))}
         </Section>
 
         <Section title="Show">

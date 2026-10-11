@@ -31,17 +31,21 @@ export function PlatformIcons({
   size = 22,
   label = 'Works with',
   inline = false,
+  only,
 }: {
   on?: 'light' | 'dark';
   size?: number;
   label?: string;
   /** Sits inside a sentence: smaller chips, aligned to the text. */
   inline?: boolean;
+  /** Show just these icons (default: all three). */
+  only?: readonly ('instagram' | 'threads' | 'facebook')[];
 }) {
+  const shown = only ? ICONS.filter((i) => only.includes(i.id)) : ICONS;
   return (
     // Spans with list roles, so the row can also sit inside a sentence.
-    <span role="list" className={`social-icons on-${on}${inline ? ' inline' : ''}`} aria-label={`${label} Instagram, Threads and Facebook`.trim()}>
-      {ICONS.map((icon) => {
+    <span role="list" className={`social-icons on-${on}${inline ? ' inline' : ''}`} aria-label={`${label} ${shown.map((i) => i.name).join(', ')}`.trim()}>
+      {shown.map((icon) => {
         const w = (img: { w: number; h: number }) => Math.round((size * img.w) / img.h);
         return (
           <span role="listitem" key={icon.id}>

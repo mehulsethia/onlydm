@@ -13,12 +13,10 @@ export const PLATFORM_META: Record<PlatformId, PlatformMeta> = {
   messenger: { label: 'Facebook', domain: 'facebook.com', helpUrl: 'https://www.facebook.com/help/' },
 };
 
-/** Tile order on the "pick apps" screen; also the sign-in order. */
-export const PICK_ORDER: readonly PlatformId[] = ['instagram', 'threads', 'messenger'];
+/** Instagram is the product. Threads and Facebook are optional extras, connected from Settings. */
+export const PRIMARY_PLATFORM: PlatformId = 'instagram';
+export const EXTRA_PLATFORMS: readonly PlatformId[] = ['threads', 'messenger'];
+/** Tab order in the inbox. */
+export const PLATFORM_ORDER: readonly PlatformId[] = [PRIMARY_PLATFORM, ...EXTRA_PLATFORMS];
 
 export const platformLabel = (id: PlatformId) => PLATFORM_META[id].label;
-
-/** Keeps only known ids, de-duplicated, in pick order. */
-export function normalisePicked(ids: readonly string[]): PlatformId[] {
-  return PICK_ORDER.filter((id) => ids.includes(id));
-}

@@ -7,8 +7,6 @@ export interface ProgressSnapshot {
   onboardingComplete: boolean;
   /** Last onboarding step the user reached, as stored. */
   step: string | null;
-  /** At least one app picked on the pick-apps screen. */
-  hasApps: boolean;
   totalMinutes: number | null;
   talkingMinutes: number | null;
 }
@@ -30,8 +28,7 @@ export function resolveStartRoute(p: ProgressSnapshot): string {
   if (p.signedIn) return routeForStep(after(step, 'trust') ? step : 'trust');
 
   // Screens that echo earlier answers cannot show without them.
-  if (after(step, 'total-time') && !p.hasApps) step = 'pick-apps';
-  else if (after(step, 'talking-time') && p.totalMinutes === null) step = 'total-time';
+  if (after(step, 'talking-time') && p.totalMinutes === null) step = 'total-time';
   else if (after(step, 'receipt') && p.talkingMinutes === null) step = 'talking-time';
 
   // Year and refund are skipped for someone who is mostly here to talk.

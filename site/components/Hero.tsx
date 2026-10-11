@@ -6,10 +6,10 @@ import { site } from '@/lib/site';
 
 /** The main benefits, as chat bubbles under the phone: a row of three, then two. */
 const BENEFITS = [
-  'Opens on your messages',
+  'Opens on your DMs',
   'No feed, Reels or Explore',
-  'All three apps in one place',
-  'Sign in on their own page',
+  'Group chats and stories stay',
+  'Sign in on Instagram’s own page',
   'Nothing stored on our servers',
 ];
 
@@ -30,9 +30,9 @@ export function Hero() {
             <p>
               <strong className="lede-lead">Only DMs, zero distractions.</strong> OnlyDM{' '}
               <span className="nowrap">
-                opens <PlatformIcons inline size={16} label="" />
+                opens <PlatformIcons inline size={16} label="" only={['instagram']} /> Instagram
               </span>{' '}
-              straight to your messages.
+              straight to your DMs.
             </p>
             <p className="lede-no">No feed. No Reels. No Explore.</p>
           </div>

@@ -28,9 +28,9 @@ export default function Privacy() {
 
       <h2>What OnlyDM is</h2>
       <p>
-        OnlyDM is an app for iPhone and Android that opens the official Instagram, Threads and Facebook websites in a focused
-        window showing your messages and friends’ stories, with the feed, Reels and Explore hidden. You sign in directly with
-        each platform, on its own page. OnlyDM is operated by {operator} (“OnlyDM”, “we”, “us”) and is not affiliated with Meta.
+        OnlyDM is an app for iPhone and Android that opens the official Instagram website in a focused
+        window showing your messages and friends’ stories, with the feed, Reels and Explore hidden. You can optionally add
+        Threads and Facebook from Settings. You sign in directly with each platform, on its own page. OnlyDM is operated by {operator} (“OnlyDM”, “we”, “us”) and is not affiliated with Meta.
       </p>
 
       <h2>What we never collect</h2>
@@ -90,7 +90,7 @@ export default function Privacy() {
       <h2>Third parties</h2>
       <ul>
         <li>
-          <strong>Meta Platforms:</strong> your Instagram, Threads and Facebook sessions inside the app are governed by{' '}
+          <strong>Meta Platforms:</strong> your Instagram sessions (and Threads or Facebook, if you add them) inside the app are governed by{' '}
           <a href="https://www.facebook.com/privacy/policy" {...ext}>
             Meta’s privacy policy
           </a>
@@ -121,7 +121,7 @@ export default function Privacy() {
 
       <h2>Children</h2>
       <p>
-        OnlyDM is not meant for children under 13, or under the minimum age to use Instagram, Threads or Facebook where you
+        OnlyDM is not meant for children under 13, or under the minimum age to use Instagram where you
         live. We don’t knowingly collect anything from children.
       </p>
 

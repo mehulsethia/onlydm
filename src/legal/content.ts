@@ -48,7 +48,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
       {
         heading: 'What OnlyDM is',
         paragraphs: [
-          'OnlyDM opens the official Instagram, Threads and Facebook websites in a focused window showing your messages and friends’ stories, with the feed, Reels and Explore hidden. You sign in directly with each platform, on its own page. OnlyDM is not affiliated with Meta.',
+          'OnlyDM opens the official Instagram website in a focused window showing your messages and friends’ stories, with the feed, Reels and Explore hidden. You can optionally add Threads and Facebook from Settings. You sign in directly with each platform, on its own page. OnlyDM is not affiliated with Meta.',
         ],
       },
       {
@@ -69,7 +69,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
         heading: 'What stays on your phone',
         paragraphs: ['To work, the app keeps a few small things in local storage on your device. They never leave it:'],
         bullets: [
-          'Which apps you picked, and which ones you’re signed in to.',
+          'Which accounts you’re signed in to.',
           'Your two setup answers, used only to draw your receipt.',
           'Where you are in setup, and which account you last looked at.',
           'The platforms’ own sign-in cookies, stored by your phone’s web view. OnlyDM doesn’t read them.',
@@ -91,7 +91,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
       {
         heading: 'Third parties',
         bullets: [
-          'Meta Platforms: your Instagram, Threads and Facebook sessions inside the app are governed by Meta’s privacy policy.',
+          'Meta Platforms: your Instagram sessions (and Threads or Facebook, if you add them) inside the app are governed by Meta’s privacy policy.',
           'Apple and Google: process subscription payments under their privacy policies.',
           'RevenueCat: checks subscription status under its privacy policy.',
         ],
@@ -105,7 +105,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
       {
         heading: 'Children',
         paragraphs: [
-          'OnlyDM is not meant for children under 13, or under the minimum age to use Instagram, Threads or Facebook where you live.',
+          'OnlyDM is not meant for children under 13, or under the minimum age to use Instagram where you live.',
         ],
       },
       {
@@ -145,7 +145,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
         ],
       },
       {
-        heading: 'Instagram, Threads and Facebook',
+        heading: 'Instagram and Meta',
         paragraphs: [
           'OnlyDM is not affiliated with, endorsed by, or sponsored by Instagram, Threads, Facebook or Meta Platforms, Inc. You need your own accounts, and your use of them inside OnlyDM remains governed by their own terms. OnlyDM shows their websites with the feed, Reels and Explore hidden; they may change their sites in ways that affect OnlyDM at any time.',
         ],
@@ -159,7 +159,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
       {
         heading: 'No warranty',
         paragraphs: [
-          'OnlyDM is provided as is, without warranty of any kind. We are not liable for anything Instagram, Threads or Facebook do to your account, for messages you send or receive, or for interruptions caused by changes to their websites. As far as the law allows, our total liability is limited to what you paid for OnlyDM in the 12 months before a claim. Nothing here limits consumer rights that can’t be excluded.',
+          'OnlyDM is provided as is, without warranty of any kind. We are not liable for anything Instagram (or Threads or Facebook, if you add them) do to your account, for messages you send or receive, or for interruptions caused by changes to their websites. As far as the law allows, our total liability is limited to what you paid for OnlyDM in the 12 months before a claim. Nothing here limits consumer rights that can’t be excluded.',
         ],
       },
       {

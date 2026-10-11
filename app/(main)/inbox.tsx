@@ -10,9 +10,8 @@ import { PlatformWebView, type PlatformWebViewHandle } from '@/components/Platfo
 import { isAllowedPath, isLoginPath, pathMatches } from '@/rules/matching';
 import { getPack } from '@/rules/store';
 import type { PlatformId } from '@/rules/types';
-import { PICK_ORDER, platformLabel } from '@/state/platformMeta';
+import { PLATFORM_ORDER, platformLabel } from '@/state/platformMeta';
 import { connectedPlatforms, getActivePlatform, markSignedInTo, setActivePlatform } from '@/state/platforms';
-import { readProgress } from '@/state/progress';
 import { onWebEvent } from '@/state/webEvents';
 import { STORY_RINGS_SCRIPT } from '@/stories/instagram';
 import { colors, fonts, radius, sizes, spacing } from '@/theme/tokens';
@@ -21,11 +20,9 @@ import { useLayout } from '@/theme/useLayout';
 /** The three inboxes are light pages; the strip under them (home indicator, Android nav bar) matches. */
 const PAGE_BACKGROUND = '#FFFFFF';
 
-/** Connected platforms, in the order the user picked them. Falls back to the active one if none is connected. */
+/** Connected platforms, Instagram first. Falls back to the active one if none is connected. */
 function tabsFor(connected: PlatformId[]): PlatformId[] {
-  const picked = readProgress().picked;
-  const order = [...picked, ...PICK_ORDER.filter((id) => !picked.includes(id))];
-  const tabs = order.filter((id) => connected.includes(id));
+  const tabs = PLATFORM_ORDER.filter((id) => connected.includes(id));
   return tabs.length ? tabs : [getActivePlatform()];
 }
 

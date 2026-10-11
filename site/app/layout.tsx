@@ -15,7 +15,7 @@ export const metadata: Metadata = {
   title: { default: `OnlyDM — ${site.headline}`, template: '%s · OnlyDM' },
   description: site.description,
   applicationName: 'OnlyDM',
-  keywords: ['OnlyDM', 'Instagram DMs only', 'Instagram without feed', 'hide Instagram Reels', 'Threads messages', 'Facebook Messenger', 'quit scrolling', 'screen time', 'digital wellbeing'],
+  keywords: ['OnlyDM', 'Instagram DMs only', 'Instagram without feed', 'Instagram messages only', 'hide Instagram Reels', 'hide Instagram Explore', 'use Instagram without scrolling', 'quit Instagram but keep group chats', 'Instagram screen time', 'digital wellbeing'],
   authors: [{ name: 'OnlyDM', url: site.url }],
   creator: 'OnlyDM',
   publisher: 'OnlyDM',

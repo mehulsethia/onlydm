@@ -41,7 +41,7 @@ export default function ColdOpen() {
       footer={
         settled ? (
           <Animated.View key="next" entering={FadeIn.duration(motion.base)}>
-            <Button label="Every time." onPress={() => router.push('/(onboarding)/pick-apps')} />
+            <Button label="Every time." onPress={() => router.push('/(onboarding)/total-time')} />
           </Animated.View>
         ) : spun ? (
           // Holds the space while the clock turns.
