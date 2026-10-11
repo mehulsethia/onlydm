@@ -9,7 +9,7 @@
     "userInterfaceStyle": "light",
     "ios": {
       "bundleIdentifier": "com.onlydm.app",
-      "supportsTablet": true,
+      "supportsTablet": false,
       "infoPlist": {
         "NSCameraUsageDescription": "OnlyDM uses the camera so you can take a photo to send in a message.",
         "NSMicrophoneUsageDescription": "OnlyDM uses the microphone so you can record voice notes and video messages.",
