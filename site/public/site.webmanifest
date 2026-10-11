@@ -1,11 +1,11 @@
 {
   "name": "OnlyDM",
   "short_name": "OnlyDM",
-  "description": "Reply and leave.",
+  "description": "Only DMs, zero distractions. Instagram, Threads and Facebook messages without the feed.",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#0E0F12",
-  "theme_color": "#0E0F12",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
   "icons": [
     {
       "src": "/favicon.svg",
@@ -33,5 +33,6 @@
       "type": "image/png",
       "purpose": "maskable"
     }
-  ]
+  ],
+  "lang": "en"
 }

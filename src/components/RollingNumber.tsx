@@ -1,17 +1,18 @@
 import { useEffect } from 'react';
 import { Text, View, type TextStyle } from 'react-native';
-import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withDelay, withSpring } from 'react-native-reanimated';
+import Animated, { useAnimatedStyle, useReducedMotion, useSharedValue, withTiming, Easing } from 'react-native-reanimated';
 import { toColumns } from '@/motion/digits';
 import { colors, typeScale } from '@/theme/tokens';
 
 const DIGITS = [0, 1, 2, 3, 4, 5, 6, 7, 8, 9];
 
-function Digit({ digit, lineHeight, style, delay }: { digit: number; lineHeight: number; style: TextStyle; delay: number }) {
+function Digit({ digit, lineHeight, style }: { digit: number; lineHeight: number; style: TextStyle }) {
   const reduce = useReducedMotion();
   const y = useSharedValue(reduce ? -digit * lineHeight : 0);
   useEffect(() => {
-    y.value = reduce ? -digit * lineHeight : withDelay(delay, withSpring(-digit * lineHeight, { damping: 18, stiffness: 120 }));
-  }, [digit, lineHeight, delay, reduce, y]);
+    // Short ease-out, no spring or stagger: while dragging, each new target retargets smoothly instead of overshooting.
+    y.value = reduce ? -digit * lineHeight : withTiming(-digit * lineHeight, { duration: 140, easing: Easing.out(Easing.cubic) });
+  }, [digit, lineHeight, reduce, y]);
   const strip = useAnimatedStyle(() => ({ transform: [{ translateY: y.value }] }));
   return (
     <View style={{ height: lineHeight, overflow: 'hidden' }}>
@@ -31,13 +32,15 @@ export function RollingNumber({ text, style }: { text: string; style?: TextStyle
   const cols = toColumns(text);
   return (
     <View accessible accessibilityLabel={text} style={{ flexDirection: 'row', justifyContent: 'center' }}>
-      {cols.map((c, i) =>
-        c.digit === null ? (
-          <Text key={i} importantForAccessibility="no" style={[base, { height: lineHeight }]}>{c.char}</Text>
+      {cols.map((c, i) => {
+        // Keyed from the right, so "9 min" becoming "1 h 00 min" keeps the units' columns instead of re-spinning every digit.
+        const key = cols.length - i;
+        return c.digit === null ? (
+          <Text key={key} importantForAccessibility="no" style={[base, { height: lineHeight }]}>{c.char}</Text>
         ) : (
-          <Digit key={i} digit={c.digit} lineHeight={lineHeight} style={base} delay={i * 30} />
-        ),
-      )}
+          <Digit key={key} digit={c.digit} lineHeight={lineHeight} style={base} />
+        );
+      })}
     </View>
   );
 }

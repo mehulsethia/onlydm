@@ -1,6 +1,7 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { View, type LayoutChangeEvent } from 'react-native';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
+import Animated, { Easing, useAnimatedStyle, useReducedMotion, useSharedValue, withTiming } from 'react-native-reanimated';
 import { formatReadout, snap, spokenDuration } from '@/onboarding/maths';
 import { tick } from '@/motion/haptics';
 import { colors, sizes, spacing, typeScale } from '@/theme/tokens';
@@ -31,6 +32,16 @@ export function DurationSlider({ label, min, max, step, value, onChange }: Props
   const span = Math.max(step, max - min);
   const ratio = Math.min(1, Math.max(0, (value - min) / span));
 
+  // The thumb follows the finger continuously; only the readout (and haptic) move in steps. After release it settles on the step.
+  const reduce = useReducedMotion();
+  const pos = useSharedValue(ratio);
+  const dragging = useRef(false);
+  useEffect(() => {
+    if (!dragging.current) pos.value = reduce ? ratio : withTiming(ratio, { duration: 160, easing: Easing.out(Easing.cubic) });
+  }, [ratio, reduce, pos]);
+  const thumbStyle = useAnimatedStyle(() => ({ transform: [{ translateX: pos.value * Math.max(0, width - THUMB) }] }));
+  const fillStyle = useAnimatedStyle(() => ({ width: `${pos.value * 100}%` }));
+
   const set = (next: number) => {
     const v = snap(next, step, min, max);
     if (v === last.current) return;
@@ -41,14 +52,22 @@ export function DurationSlider({ label, min, max, step, value, onChange }: Props
   const fromX = (x: number) => {
     if (width <= 0) return;
     const usable = Math.max(1, width - THUMB);
-    set(min + ((x - THUMB / 2) / usable) * span);
+    const raw = Math.min(1, Math.max(0, (x - THUMB / 2) / usable));
+    dragging.current = true;
+    pos.value = raw;
+    set(min + raw * span);
+  };
+  const settle = () => {
+    dragging.current = false;
+    pos.value = withTiming(ratio, { duration: 140, easing: Easing.out(Easing.cubic) });
   };
 
   const pan = Gesture.Pan()
     .runOnJS(true)
     .minDistance(0)
     .onBegin((e) => fromX(e.x))
-    .onUpdate((e) => fromX(e.x));
+    .onUpdate((e) => fromX(e.x))
+    .onFinalize(settle);
 
   const onLayout = (e: LayoutChangeEvent) => setWidth(e.nativeEvent.layout.width);
   last.current = value;
@@ -70,24 +89,27 @@ export function DurationSlider({ label, min, max, step, value, onChange }: Props
           style={{ height: sizes.button, justifyContent: 'center' }}
         >
           <View style={{ height: TRACK, marginHorizontal: THUMB / 2, borderRadius: TRACK / 2, backgroundColor: 'rgba(10,10,10,0.1)' }}>
-            <View style={{ width: `${ratio * 100}%`, height: TRACK, borderRadius: TRACK / 2, backgroundColor: colors.primary }} />
+            <Animated.View style={[{ height: TRACK, borderRadius: TRACK / 2, backgroundColor: colors.primary }, fillStyle]} />
           </View>
-          <View
+          <Animated.View
             pointerEvents="none"
-            style={{
-              position: 'absolute',
-              left: ratio * Math.max(0, width - THUMB),
-              width: THUMB,
-              height: THUMB,
-              borderRadius: THUMB / 2,
-              backgroundColor: colors.primary,
-              borderWidth: 4,
-              borderColor: colors.surface,
-              shadowColor: colors.shadow,
-              shadowOpacity: 0.2,
-              shadowRadius: 8,
-              shadowOffset: { width: 0, height: 3 },
-            }}
+            style={[
+              {
+                position: 'absolute',
+                left: 0,
+                width: THUMB,
+                height: THUMB,
+                borderRadius: THUMB / 2,
+                backgroundColor: colors.primary,
+                borderWidth: 4,
+                borderColor: colors.surface,
+                shadowColor: colors.shadow,
+                shadowOpacity: 0.2,
+                shadowRadius: 8,
+                shadowOffset: { width: 0, height: 3 },
+              },
+              thumbStyle,
+            ]}
           />
         </View>
       </GestureDetector>

@@ -3,6 +3,8 @@ import { Pressable, ScrollView, View } from 'react-native';
 import { useFocusEffect, useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { AppText } from '@/components/AppText';
+import { GlassIconButton } from '@/components/GlassIconButton';
+import { GearIcon } from '@/components/Icons';
 import { Logo } from '@/components/Logo';
 import { PlatformWebView, type PlatformWebViewHandle } from '@/components/PlatformWebView';
 import { isAllowedPath, isLoginPath, pathMatches } from '@/rules/matching';
@@ -85,11 +87,11 @@ export default function Inbox() {
     <View style={{ flex: 1, backgroundColor: 'transparent', paddingTop: insets.top, paddingLeft: insets.left, paddingRight: insets.right, alignItems: 'center' }}>
       {/* One phone-width column on every screen: header, tabs and inbox line up on phones, tablets and desktops. */}
       <View style={{ flex: 1, width: webWidth, maxWidth: '100%' }}>
-        <View style={{ minHeight: 52, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.md }}>
+        <View style={{ minHeight: 56, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', paddingHorizontal: spacing.md }}>
           <Logo size={22} />
-          <Pressable accessibilityRole="button" accessibilityLabel="Settings" hitSlop={6} onPress={() => router.push('/(main)/settings')} style={{ minHeight: sizes.touch, justifyContent: 'center', paddingHorizontal: spacing.sm }}>
-            <AppText variant="bodyMedium" muted>Settings</AppText>
-          </Pressable>
+          <GlassIconButton label="Settings" onPress={() => router.push('/(main)/settings')}>
+            <GearIcon color={colors.text} />
+          </GlassIconButton>
         </View>
 
         {tabs.length > 1 && (

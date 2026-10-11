@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { contactHref, site } from '@/lib/site';
 
-export const metadata: Metadata = { title: 'Terms of Use', description: 'The terms for using OnlyDM.' };
+export const metadata: Metadata = { alternates: { canonical: '/terms/' }, title: 'Terms of Use', description: 'The terms for using OnlyDM.' };
 
 const ext = { rel: 'noopener noreferrer', className: 'text-link' } as const;
 

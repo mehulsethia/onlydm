@@ -33,9 +33,33 @@ const FAQ = [
   },
 ];
 
+const jsonLd = {
+  '@context': 'https://schema.org',
+  '@graph': [
+    { '@type': 'Organization', '@id': `${site.url}/#org`, name: 'OnlyDM', url: site.url, logo: `${site.url}/favicon-512x512.png`, email: site.contactEmail },
+    { '@type': 'WebSite', '@id': `${site.url}/#website`, url: site.url, name: 'OnlyDM', description: site.description, publisher: { '@id': `${site.url}/#org` }, inLanguage: 'en' },
+    {
+      '@type': 'MobileApplication',
+      name: 'OnlyDM',
+      description: site.description,
+      url: site.url,
+      image: `${site.url}/og.png`,
+      applicationCategory: 'LifestyleApplication',
+      operatingSystem: 'iOS, Android',
+      ...(site.appStoreUrl ? { downloadUrl: site.appStoreUrl } : {}),
+      publisher: { '@id': `${site.url}/#org` },
+    },
+    {
+      '@type': 'FAQPage',
+      mainEntity: FAQ.map(({ q, a }) => ({ '@type': 'Question', name: q, acceptedAnswer: { '@type': 'Answer', text: a } })),
+    },
+  ],
+};
+
 export default function Home() {
   return (
     <>
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, '\\u003c') }} />
       <Hero />
       <SoundFamiliar />
 

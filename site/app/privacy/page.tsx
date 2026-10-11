@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import { contactHref, site } from '@/lib/site';
 
-export const metadata: Metadata = { title: 'Privacy Policy', description: 'What OnlyDM collects: almost nothing, and nothing that identifies you.' };
+export const metadata: Metadata = { alternates: { canonical: '/privacy/' }, title: 'Privacy Policy', description: 'What OnlyDM collects: almost nothing, and nothing that identifies you.' };
 
 const ext = { rel: 'noopener noreferrer', className: 'text-link' } as const;
 

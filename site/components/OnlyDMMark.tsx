@@ -1,17 +1,14 @@
 /**
- * The OnlyDM mark, from assets/brand (same path data). Light variant (black bubble) on white,
- * dark variant (white bubble) on black. The blue and magenta dots are the only brand colour on the site.
+ * The OnlyDM mark: a paper plane, drawn as two pieces. Black on light backgrounds, white on dark.
+ * Same shapes as the app icon (scripts/make-icon.py in the repo root).
  */
 export function OnlyDMMark({ size = 28, on = 'light', title }: { size?: number; on?: 'light' | 'dark'; title?: string }) {
-  const bubble = on === 'dark' ? '#FFFFFF' : '#0E0F12';
-  const last = on === 'dark' ? '#0E0F12' : '#FFFFFF';
+  const fill = on === 'dark' ? '#FFFFFF' : '#0A0A0A';
   return (
-    <svg width={(size * 108) / 100} height={size} viewBox="6 12 108 100" role={title ? 'img' : undefined} aria-hidden={title ? undefined : true}>
+    <svg width={size} height={size} viewBox="64 120 328 328" role={title ? 'img' : undefined} aria-hidden={title ? undefined : true}>
       {title ? <title>{title}</title> : null}
-      <path d="M46 16h28a36 36 0 0 1 0 72H50L26 108l2-25.5A36 36 0 0 1 46 16z" fill={bubble} />
-      <circle cx="38" cy="52" r="9" fill="#1463FF" />
-      <circle cx="60" cy="52" r="9" fill="#E4257A" />
-      <circle cx="82" cy="52" r="9" fill={last} />
+      <path d="M70 229L378 126L210 296Z" fill={fill} />
+      <path d="M216 303L385 133L283 441Z" fill={fill} />
     </svg>
   );
 }

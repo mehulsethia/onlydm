@@ -86,3 +86,16 @@ export function ExitIcon({ size = 22, color }: { size?: number; color: string })
     </Svg>
   );
 }
+
+/** A cog: the settings button. */
+export function GearIcon({ size = 24, color }: { size?: number; color: string }) {
+  return (
+    <Svg width={size} height={size} viewBox="0 0 24 24" accessible={false}>
+      <Circle cx={12} cy={12} r={6.4} fill="none" stroke={color} strokeWidth={2} />
+      <Circle cx={12} cy={12} r={2.4} fill="none" stroke={color} strokeWidth={2} />
+      {[0, 45, 90, 135].map((deg) => (
+        <Path key={deg} d="M12 2.6v2.6M12 18.8v2.6" stroke={color} strokeWidth={2.6} strokeLinecap="round" transform={`rotate(${deg} 12 12)`} />
+      ))}
+    </Svg>
+  );
+}
