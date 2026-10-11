@@ -1,4 +1,4 @@
-import { useCallback, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { Alert, Linking, Pressable, View } from 'react-native';
 import CookieManager from '@react-native-cookies/cookies';
 import Constants from 'expo-constants';
@@ -101,14 +101,17 @@ function Section({ title, children }: { title: string; children: React.ReactNode
 
 export default function Settings() {
   const router = useRouter();
-  const { mode, customer, restore, busy } = usePayments();
+  const { mode, customer, restore, busy, getSupportId } = usePayments();
   const pack = getActivePack();
   const [note, setNote] = useState<string | null>(null);
+  const [supportId, setSupportId] = useState<string | null>(null);
+  useEffect(() => {
+    getSupportId().then(setSupportId);
+  }, [getSupportId]);
   const [connected, setConnected] = useState(connectedPlatforms);
   useFocusEffect(useCallback(() => setConnected(connectedPlatforms()), []));
 
   const status = (() => {
-    if (mode === 'dev') return 'Dev mode: everything unlocked';
     if (!customer.isPro) return 'Not subscribed';
     if (customer.lifetime) return 'Lifetime access';
     const when = customer.expiresAt ? formatDate(new Date(customer.expiresAt)) : null;
@@ -221,7 +224,7 @@ export default function Settings() {
           </AppText>
           <Row label="Privacy Policy" onPress={() => openDoc('privacy')} />
           <Row label="Terms of Use" onPress={() => openDoc('terms')} />
-          <Row label="Contact" detail={CONTACT_EMAIL} onPress={() => Linking.openURL(CONTACT_URL).catch(() => {})} last />
+          <Row label="Contact" detail={CONTACT_EMAIL} onPress={() => Linking.openURL(supportId ? `${CONTACT_URL}&body=${encodeURIComponent(`\n\n---\nSupport ID: ${supportId}\nVersion: ${Constants.expoConfig?.version ?? ''}`)}` : CONTACT_URL).catch(() => {})} last />
         </Section>
 
         <Section title="About">
@@ -233,6 +236,7 @@ export default function Settings() {
             </View>
           </View>
           <Row label="Version" detail={Constants.expoConfig?.version ?? '1.0.0'} />
+          {supportId ? <Row label="Support ID" detail={supportId} /> : null}
           <Row label="Rules pack" detail={`v${pack.version}`} />
           <AppText variant="small" muted style={{ padding: spacing.md }}>
             Not affiliated with Meta.

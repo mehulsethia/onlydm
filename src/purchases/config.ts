@@ -1,7 +1,7 @@
 import { Platform } from 'react-native';
 import { SITE_URL } from '@/config/links';
 
-/** Public SDK keys from env (EXPO_PUBLIC_*). Absent keys mean dev mode: everything unlocked. */
+/** Public SDK keys from env (EXPO_PUBLIC_*). Absent keys: development builds unlock everything, release builds sell nothing. */
 const IOS_KEY = process.env.EXPO_PUBLIC_REVENUECAT_IOS_KEY;
 const ANDROID_KEY = process.env.EXPO_PUBLIC_REVENUECAT_ANDROID_KEY;
 

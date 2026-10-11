@@ -20,5 +20,6 @@ export const devProvider: PaymentsProvider = {
   getState: async () => UNLOCKED,
   purchase: async () => ({ state: UNLOCKED, cancelled: false }),
   restore: async () => UNLOCKED,
+  getSupportId: async () => null,
   onChange: () => () => {},
 };

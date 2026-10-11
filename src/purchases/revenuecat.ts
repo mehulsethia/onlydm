@@ -56,6 +56,11 @@ export function createRevenueCatProvider(apiKey: string): PaymentsProvider {
       return customerStateFrom(await Purchases.restorePurchases());
     },
 
+    async getSupportId() {
+      ensure();
+      return Purchases.getAppUserID();
+    },
+
     onChange(listener) {
       ensure();
       const handler = (info: Parameters<typeof customerStateFrom>[0]) => listener(customerStateFrom(info));

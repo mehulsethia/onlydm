@@ -236,7 +236,7 @@ export default function Paywall() {
             </View>
           ) : null}
           {mode === 'dev' ? (
-            <Button label={__DEV__ ? 'Continue (dev mode)' : 'Continue'} onPress={finish} />
+            <Button label="Continue" onPress={finish} />
           ) : (
             <Button label={trialDays ? `Start ${trialDays} days free` : plan?.kind === 'lifetime' ? 'Buy lifetime access' : 'Subscribe'} onPress={buy} disabled={!plan || busy} />
           )}
@@ -255,12 +255,6 @@ export default function Paywall() {
       }
       pane={
         <View style={{ gap: spacing.lg }}>
-          {__DEV__ && mode === 'dev' && (
-            <AppText variant="caption" muted>
-              Dev mode: no store keys are set, so purchases are simulated and everything is unlocked. Prices shown are the US launch prices.
-            </AppText>
-          )}
-
           {plans.length === 0 && !plansError && <Loader size={32} label="Loading plans" />}
           {plansError && (
             <View style={{ gap: spacing.sm }}>

@@ -15,6 +15,7 @@ interface PaymentsValue {
   loadPlans: () => Promise<void>;
   purchase: (planId: string) => Promise<'purchased' | 'cancelled' | 'failed'>;
   restore: () => Promise<boolean>;
+  getSupportId: () => Promise<string | null>;
 }
 
 const Ctx = createContext<PaymentsValue | null>(null);
@@ -83,9 +84,11 @@ export function PaymentsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const getSupportId = useCallback(() => provider.getSupportId().catch(() => null), []);
+
   const value = useMemo<PaymentsValue>(
-    () => ({ mode: provider.mode, ready, plans, plansError, customer, isPro: customer.isPro, busy, error, loadPlans, purchase, restore }),
-    [ready, plans, plansError, customer, busy, error, loadPlans, purchase, restore],
+    () => ({ mode: provider.mode, ready, plans, plansError, customer, isPro: customer.isPro, busy, error, loadPlans, purchase, restore, getSupportId }),
+    [ready, plans, plansError, customer, busy, error, loadPlans, purchase, restore, getSupportId],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

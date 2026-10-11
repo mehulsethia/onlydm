@@ -79,7 +79,7 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
       {
         heading: 'Purchases',
         paragraphs: [
-          'OnlyDM offers auto-renewable subscriptions, bought through Apple or Google and billed to your store account. We never see your payment details. RevenueCat verifies your subscription status using an anonymous identifier generated on your phone, plus the store’s purchase receipt. We use that status only to unlock the app.',
+          'OnlyDM offers auto-renewable subscriptions and a one-time lifetime purchase, bought through Apple or Google and billed to your store account. We never see your payment details. RevenueCat verifies your subscription status using an anonymous identifier generated on your phone, plus the store’s purchase receipt. We use that status only to unlock the app.',
         ],
       },
       {

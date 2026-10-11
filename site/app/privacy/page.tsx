@@ -68,7 +68,7 @@ export default function Privacy() {
 
       <h2>Purchases</h2>
       <p>
-        OnlyDM offers auto-renewable subscriptions, bought through Apple (App Store) or Google (Google Play) and billed to
+        OnlyDM offers auto-renewable subscriptions and a one-time lifetime purchase, bought through Apple (App Store) or Google (Google Play) and billed to
         your store account. We never see your payment details. RevenueCat verifies your subscription status using an
         anonymous identifier generated on your phone, plus the store’s purchase receipt. We use that status only to unlock
         the app.
