@@ -28,11 +28,10 @@ export function Hero() {
           </h1>
           <div className="lede hero-lede">
             <p>
-              <strong className="lede-lead">Only DMs, zero distractions.</strong> OnlyDM{' '}
-              <span className="nowrap">
-                opens <PlatformIcons inline size={16} label="" only={['instagram']} /> Instagram
-              </span>{' '}
-              straight to your DMs.
+              <strong className="lede-lead">Only DMs, zero distractions.</strong>
+            </p>
+            <p className="lede-one-line">
+              OnlyDM opens <PlatformIcons inline size={16} label="" only={['instagram']} /> Instagram straight to your DMs.
             </p>
             <p className="lede-no">No feed. No Reels. No Explore.</p>
           </div>

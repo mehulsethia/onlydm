@@ -46,7 +46,13 @@ describe('mapPackage(s)', () => {
     expect(mapPackage(pkg({ identifier: '$rc_annual', packageType: 'ANNUAL' }))?.kind).toBe('yearly');
   });
   it('drops other package types', () => {
-    expect(mapPackage(pkg({ packageType: 'LIFETIME' }))).toBeNull();
+    expect(mapPackage(pkg({ packageType: 'WEEKLY' }))).toBeNull();
+  });
+  it('maps a lifetime package and puts it last', () => {
+    const lifetime = pkg({ identifier: '$rc_lifetime', packageType: 'LIFETIME', intro: null });
+    expect(mapPackage(lifetime)?.kind).toBe('lifetime');
+    const plans = mapPackages([lifetime, pkg(), pkg({ identifier: '$rc_annual', packageType: 'ANNUAL' })]);
+    expect(plans.map((p) => p.kind)).toEqual(['yearly', 'monthly', 'lifetime']);
   });
   it('orders yearly first', () => {
     const plans = mapPackages([pkg(), pkg({ identifier: '$rc_annual', packageType: 'ANNUAL' })]);
@@ -60,7 +66,11 @@ describe('mapPackage(s)', () => {
 describe('customerStateFrom', () => {
   it('is pro with an active "pro" entitlement and detects trials', () => {
     const state = customerStateFrom({ entitlements: { active: { pro: { expirationDate: '2026-11-01T00:00:00Z', willRenew: true, periodType: 'TRIAL' } } } });
-    expect(state).toEqual({ isPro: true, inTrial: true, expiresAt: '2026-11-01T00:00:00Z', willRenew: true });
+    expect(state).toEqual({ isPro: true, inTrial: true, expiresAt: '2026-11-01T00:00:00Z', willRenew: true, lifetime: false });
+  });
+  it('treats an entitlement with no expiry date as lifetime', () => {
+    const state = customerStateFrom({ entitlements: { active: { pro: { expirationDate: null, willRenew: false, periodType: 'NORMAL' } } } });
+    expect(state).toEqual({ isPro: true, inTrial: false, expiresAt: null, willRenew: false, lifetime: true });
   });
   it('has no access without the entitlement', () => {
     expect(customerStateFrom({ entitlements: { active: {} } })).toEqual(NO_ACCESS);
@@ -144,5 +154,14 @@ describe('launch pricing', () => {
   it('shows no saving across currencies or when yearly costs more', () => {
     expect(yearlySavingsAmount(plan('monthly', 3.99, 'USD'), plan('yearly', 999, 'INR'))).toBeNull();
     expect(yearlySavingsAmount(plan('monthly', 1, 'USD'), plan('yearly', 20, 'USD'))).toBeNull();
+  });
+});
+
+describe('lifetime plan text', () => {
+  const now = new Date(2026, 9, 6, 12, 0, 0);
+  const lifetime: Plan = { id: 'l', kind: 'lifetime', priceString: '$49.99', price: 49.99, currencyCode: 'USD', trialDays: null };
+  it('says one-time, with no renewal', () => {
+    expect(billingSummary(lifetime, now)).toBe('$49.99 one-time purchase, charged today. No subscription.');
+    expect(cancellationNote(lifetime, now, 'App Store')).toMatch(/no renewal/);
   });
 });

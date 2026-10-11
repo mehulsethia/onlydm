@@ -31,11 +31,11 @@ def glow(size):
     return base
 
 
-icon = Image.alpha_composite(glow(S), plane(S, 0.62, dx=-4, dy=6))
+icon = Image.alpha_composite(glow(S), plane(S, 1.24, dx=-8, dy=12))
 icon.convert('RGB').save('assets/icon.png')
-plane(S, 0.62).save('assets/splash-icon.png')
-# Android adaptive: keep the plane inside the 66% safe zone.
-plane(S, 0.5).save('assets/icon-foreground.png')
+plane(S, 1.24).save('assets/splash-icon.png')
+# Android adaptive: the plane stays inside the 66% safe zone.
+plane(S, 1.0).save('assets/icon-foreground.png')
 print('ok')
 
 # ---- Web: favicons, touch icon, share image (site/public, public, assets/onlydm-brand/favicon) ----
@@ -43,8 +43,8 @@ import os, shutil
 
 SVG = '''<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120"><defs><radialGradient id="b" cx="10%" cy="92%" r="55%"><stop offset="0" stop-color="#78AAFF"/><stop offset="1" stop-color="#78AAFF" stop-opacity="0"/></radialGradient><radialGradient id="p" cx="92%" cy="86%" r="52%"><stop offset="0" stop-color="#FF82BE"/><stop offset="1" stop-color="#FF82BE" stop-opacity="0"/></radialGradient><radialGradient id="v" cx="62%" cy="2%" r="54%"><stop offset="0" stop-color="#B48CFF"/><stop offset="1" stop-color="#B48CFF" stop-opacity="0"/></radialGradient></defs><rect width="120" height="120" rx="27" fill="#fff"/><rect width="120" height="120" rx="27" fill="url(#b)"/><rect width="120" height="120" rx="27" fill="url(#p)"/><rect width="120" height="120" rx="27" fill="url(#v)"/><g transform="translate(60 60) scale(0.30) translate(-227.5 -283.5)" fill="#0A0A0A"><path d="M70 229L378 126L210 296Z"/><path d="M216 303L385 133L283 441Z"/></g></svg>'''
 
-fav = Image.alpha_composite(glow(S), plane(S, 0.80)).convert('RGB')
-mask = Image.alpha_composite(glow(S), plane(S, 0.5)).convert('RGB')
+fav = Image.alpha_composite(glow(S), plane(S, 1.30)).convert('RGB')
+mask = Image.alpha_composite(glow(S), plane(S, 1.0)).convert('RGB')
 touch = icon.convert('RGB')
 for d in ('site/public', 'public', 'assets/onlydm-brand/favicon'):
     os.makedirs(d, exist_ok=True)
@@ -60,7 +60,7 @@ touch.resize((512, 512), Image.LANCZOS).save('site/public/onlydm-mark-dark-512.p
 og = Image.open('site/public/og.png').convert('RGB')
 bg = og.getpixel((70, 100))
 ImageDraw.Draw(og).rectangle([80, 62, 152, 134], fill=bg)
-tile = Image.alpha_composite(glow(S), plane(S, 0.62, dx=-4, dy=6)).resize((60, 60), Image.LANCZOS)
+tile = Image.alpha_composite(glow(S), plane(S, 1.24, dx=-8, dy=12)).resize((60, 60), Image.LANCZOS)
 rounded = Image.new('L', (60, 60), 0)
 ImageDraw.Draw(rounded).rounded_rectangle([0, 0, 59, 59], radius=14, fill=255)
 og.paste(tile.convert('RGB'), (90, 70), rounded)

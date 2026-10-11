@@ -605,6 +605,11 @@ button {
 .nowrap {
   white-space: nowrap;
 }
+/* One sentence, one line: shrinks on narrow phones instead of wrapping. */
+.lede-one-line {
+  white-space: nowrap;
+  font-size: min(1em, 4.6vw);
+}
 .lede-no {
   color: var(--fg);
   font-weight: 600;

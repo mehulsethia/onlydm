@@ -88,10 +88,11 @@ function PlanCard({
   onPress: () => void;
 }) {
   const yearly = p.kind === 'yearly';
-  const name = yearly ? 'Yearly' : 'Monthly';
+  const lifetime = p.kind === 'lifetime';
+  const name = lifetime ? 'Lifetime' : yearly ? 'Yearly' : 'Monthly';
   const perMonth = formatPrice(pricePerMonth(p), p.currencyCode);
   const label =
-    `${name} plan, ${p.priceString} per ${periodWord(p.kind)}` +
+    (lifetime ? `Lifetime access, ${p.priceString} one time` : `${name} plan, ${p.priceString} per ${periodWord(p.kind)}`) +
     (yearly ? `, ${perMonth} a month` : '') +
     (p.trialDays ? `, ${p.trialDays} days free` : '') +
     (savePercent && saveAmount ? `, save ${savePercent}%, ${saveAmount} a year` : '');
@@ -129,9 +130,15 @@ function PlanCard({
       <AppText variant="bodyMedium">{name}</AppText>
       <AppText variant="heading" style={{ fontVariant: ['tabular-nums'] }}>
         {yearly ? perMonth : p.priceString}
-        <AppText variant="small" muted> / month</AppText>
+        {lifetime ? <AppText variant="small" muted> once</AppText> : <AppText variant="small" muted> / month</AppText>}
       </AppText>
-      {yearly ? <AppText variant="caption" muted>{p.priceString} billed yearly</AppText> : <AppText variant="caption" muted>Billed monthly</AppText>}
+      {lifetime ? (
+        <AppText variant="caption" muted>Pay once, keep it. No subscription.</AppText>
+      ) : yearly ? (
+        <AppText variant="caption" muted>{p.priceString} billed yearly</AppText>
+      ) : (
+        <AppText variant="caption" muted>Billed monthly</AppText>
+      )}
       {savePercent ? (
         <AppText variant="label" tone="primaryOnDark" style={{ marginTop: 2 }}>
           Save {savePercent}%
@@ -160,6 +167,8 @@ export default function Paywall() {
   }, [plans, selected]);
 
   const plan = plans.find((p) => p.id === selected) ?? null;
+  const subscriptions = plans.filter((p) => p.kind !== 'lifetime');
+  const lifetimePlan = plans.find((p) => p.kind === 'lifetime');
   const yearly = plans.find((p) => p.kind === 'yearly');
   const monthly = plans.find((p) => p.kind === 'monthly');
   // Savings are only shown when computed from the store's real prices.
@@ -229,7 +238,7 @@ export default function Paywall() {
           {mode === 'dev' ? (
             <Button label={__DEV__ ? 'Continue (dev mode)' : 'Continue'} onPress={finish} />
           ) : (
-            <Button label={trialDays ? `Start ${trialDays} days free` : 'Subscribe'} onPress={buy} disabled={!plan || busy} />
+            <Button label={trialDays ? `Start ${trialDays} days free` : plan?.kind === 'lifetime' ? 'Buy lifetime access' : 'Subscribe'} onPress={buy} disabled={!plan || busy} />
           )}
           {firstCharge && (
             <AppText variant="small" center accessibilityLiveRegion="polite">
@@ -262,7 +271,7 @@ export default function Paywall() {
 
           {/* Side by side when they fit; stacked on narrow phones and at large text sizes. */}
           <View style={{ flexDirection: stackPlans ? 'column' : 'row', gap: spacing.md }} accessibilityRole="radiogroup">
-            {plans.map((p) => (
+            {subscriptions.map((p) => (
               <PlanCard
                 key={p.id}
                 p={p}
@@ -274,6 +283,10 @@ export default function Paywall() {
               />
             ))}
           </View>
+
+          {lifetimePlan ? (
+            <PlanCard p={lifetimePlan} on={lifetimePlan.id === selected} stacked savePercent={null} saveAmount={null} onPress={() => setSelected(lifetimePlan.id)} />
+          ) : null}
 
           {saveAmount && savePercent ? (
             <View style={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'center', gap: spacing.sm }}>

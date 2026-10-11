@@ -110,6 +110,7 @@ export default function Settings() {
   const status = (() => {
     if (mode === 'dev') return 'Dev mode: everything unlocked';
     if (!customer.isPro) return 'Not subscribed';
+    if (customer.lifetime) return 'Lifetime access';
     const when = customer.expiresAt ? formatDate(new Date(customer.expiresAt)) : null;
     if (customer.inTrial) return when ? `Free trial, ends ${when}` : 'Free trial';
     if (when) return customer.willRenew ? `Active, renews ${when}` : `Active, ends ${when}`;
@@ -185,7 +186,7 @@ export default function Settings() {
 
         <Section title="Subscription">
           <Row label="Status" detail={status} />
-          {!customer.isPro || mode === 'dev' ? <Row label="Plans and pricing" detail="Monthly or yearly, 7 days free on yearly" onPress={() => router.push('/paywall')} /> : null}
+          {!customer.isPro || mode === 'dev' ? <Row label="Plans and pricing" detail="Monthly, yearly or lifetime. 7 days free on yearly" onPress={() => router.push('/paywall')} /> : null}
           <Row label="Restore purchases" onPress={doRestore} disabled={busy || mode === 'dev'} />
           <Row label="Manage subscription" onPress={() => open(MANAGE_SUBSCRIPTIONS_URL)} disabled={mode === 'dev'} />
           <Row label="Cancel anytime · How to cancel" onPress={() => openDoc('cancel')} last={!note} />

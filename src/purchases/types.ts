@@ -1,4 +1,4 @@
-export type PlanKind = 'monthly' | 'yearly';
+export type PlanKind = 'monthly' | 'yearly' | 'lifetime';
 
 /** A purchasable plan with store-localised pricing. Provider-agnostic. */
 export interface Plan {
@@ -18,9 +18,11 @@ export interface CustomerState {
   /** ISO date the current period ends (or trial ends), if known. */
   expiresAt: string | null;
   willRenew: boolean;
+  /** Bought once, no renewal and no end date. */
+  lifetime: boolean;
 }
 
-export const NO_ACCESS: CustomerState = { isPro: false, inTrial: false, expiresAt: null, willRenew: false };
+export const NO_ACCESS: CustomerState = { isPro: false, inTrial: false, expiresAt: null, willRenew: false, lifetime: false };
 
 export interface PurchaseResult {
   state: CustomerState;

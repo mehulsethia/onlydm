@@ -1,6 +1,6 @@
 import type { CustomerState, PaymentsProvider, Plan } from './types';
 
-const UNLOCKED: CustomerState = { isPro: true, inTrial: false, expiresAt: null, willRenew: false };
+const UNLOCKED: CustomerState = { isPro: true, inTrial: false, expiresAt: null, willRenew: false, lifetime: false };
 
 /**
  * Plans for reviewing the paywall without store keys, at the launch prices (US).
@@ -10,6 +10,7 @@ const UNLOCKED: CustomerState = { isPro: true, inTrial: false, expiresAt: null, 
 const PLANS: Plan[] = [
   { id: 'dev_yearly', kind: 'yearly', priceString: '$14.99', price: 14.99, currencyCode: 'USD', trialDays: 7 },
   { id: 'dev_monthly', kind: 'monthly', priceString: '$3.99', price: 3.99, currencyCode: 'USD', trialDays: null },
+  { id: 'dev_lifetime', kind: 'lifetime', priceString: '$49.99', price: 49.99, currencyCode: 'USD', trialDays: null },
 ];
 
 /** Used when no RevenueCat key is set: unlocks everything. */

@@ -28,6 +28,7 @@ const DAYS_PER_UNIT: Record<string, number> = { DAY: 1, WEEK: 7, MONTH: 30, YEAR
 export function kindOf(packageType: string): PlanKind | null {
   if (packageType === 'MONTHLY') return 'monthly';
   if (packageType === 'ANNUAL') return 'yearly';
+  if (packageType === 'LIFETIME') return 'lifetime';
   return null;
 }
 
@@ -51,18 +52,21 @@ export function mapPackage(pkg: PackageLike): Plan | null {
   };
 }
 
-/** Yearly first, as the default choice. */
+const ORDER: Record<PlanKind, number> = { yearly: 0, monthly: 1, lifetime: 2 };
+
+/** Yearly first, as the default choice; then monthly; lifetime last. */
 export function mapPackages(pkgs: PackageLike[]): Plan[] {
   return pkgs
     .map(mapPackage)
     .filter((p): p is Plan => p !== null)
-    .sort((a, b) => (a.kind === b.kind ? 0 : a.kind === 'yearly' ? -1 : 1));
+    .sort((a, b) => ORDER[a.kind] - ORDER[b.kind]);
 }
 
 export function customerStateFrom(info: CustomerInfoLike, entitlementId = ENTITLEMENT_ID): CustomerState {
   const e = info.entitlements.active[entitlementId];
   if (!e) return NO_ACCESS;
-  return { isPro: true, inTrial: e.periodType === 'TRIAL', expiresAt: e.expirationDate, willRenew: e.willRenew };
+  // A one-time purchase never expires, so it has no expiration date.
+  return { isPro: true, inTrial: e.periodType === 'TRIAL', expiresAt: e.expirationDate, willRenew: e.willRenew, lifetime: e.expirationDate === null };
 }
 
 export function trialEndDate(from: Date, trialDays: number): Date {
@@ -100,11 +104,12 @@ export function formatPrice(amount: number, currencyCode: string, locale?: strin
   }
 }
 
-const PERIOD_WORD: Record<PlanKind, string> = { monthly: 'month', yearly: 'year' };
+const PERIOD_WORD: Record<PlanKind, string> = { monthly: 'month', yearly: 'year', lifetime: 'once' };
 export const periodWord = (kind: PlanKind) => PERIOD_WORD[kind];
 
 /** What the user must see before the purchase button: trial end date, then price and period. */
 export function billingSummary(plan: Plan, now: Date, locale?: string): string {
+  if (plan.kind === 'lifetime') return `${plan.priceString} one-time purchase, charged today. No subscription.`;
   const period = periodWord(plan.kind);
   if (plan.trialDays) {
     const end = formatDate(trialEndDate(now, plan.trialDays), locale);
@@ -114,6 +119,7 @@ export function billingSummary(plan: Plan, now: Date, locale?: string): string {
 }
 
 export function cancellationNote(plan: Plan, now: Date, store: 'App Store' | 'Google Play', locale?: string): string {
+  if (plan.kind === 'lifetime') return 'One-time purchase: no subscription and no renewal. Restore it any time with the same Apple ID.';
   const where = store === 'App Store' ? 'your Apple ID settings' : 'the Play Store';
   if (plan.trialDays) {
     const end = formatDate(trialEndDate(now, plan.trialDays), locale);
