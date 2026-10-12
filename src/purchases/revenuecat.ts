@@ -20,6 +20,7 @@ export function createRevenueCatProvider(apiKey: string): PaymentsProvider {
     const available = offerings.current?.availablePackages ?? [];
     packages.clear();
     for (const p of available) packages.set(p.identifier, p);
+    if (__DEV__) for (const p of available) console.log('[iap]', p.identifier, p.product.priceString, p.product.currencyCode);
     return available;
   };
 
@@ -54,6 +55,12 @@ export function createRevenueCatProvider(apiKey: string): PaymentsProvider {
     async restore(): Promise<CustomerState> {
       ensure();
       return customerStateFrom(await Purchases.restorePurchases());
+    },
+
+    async redeemCode(): Promise<CustomerState> {
+      ensure();
+      await Purchases.presentCodeRedemptionSheet();
+      return customerStateFrom(await Purchases.getCustomerInfo());
     },
 
     async getSupportId() {

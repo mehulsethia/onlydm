@@ -64,12 +64,12 @@ describe('mapPackage(s)', () => {
 });
 
 describe('customerStateFrom', () => {
-  it('is pro with an active "pro" entitlement and detects trials', () => {
-    const state = customerStateFrom({ entitlements: { active: { pro: { expirationDate: '2026-11-01T00:00:00Z', willRenew: true, periodType: 'TRIAL' } } } });
+  it('is pro with an active "onlydm_pro" entitlement and detects trials', () => {
+    const state = customerStateFrom({ entitlements: { active: { onlydm_pro: { expirationDate: '2026-11-01T00:00:00Z', willRenew: true, periodType: 'TRIAL' } } } });
     expect(state).toEqual({ isPro: true, inTrial: true, expiresAt: '2026-11-01T00:00:00Z', willRenew: true, lifetime: false });
   });
   it('treats an entitlement with no expiry date as lifetime', () => {
-    const state = customerStateFrom({ entitlements: { active: { pro: { expirationDate: null, willRenew: false, periodType: 'NORMAL' } } } });
+    const state = customerStateFrom({ entitlements: { active: { onlydm_pro: { expirationDate: null, willRenew: false, periodType: 'NORMAL' } } } });
     expect(state).toEqual({ isPro: true, inTrial: false, expiresAt: null, willRenew: false, lifetime: true });
   });
   it('has no access without the entitlement', () => {
@@ -120,6 +120,11 @@ describe('formatPrice', () => {
   it('formats currency', () => {
     expect(formatPrice(2.5, 'USD', 'en-US')).toBe('$2.50');
   });
+  it('formats INR and JPY in their own currency', () => {
+    expect(formatPrice(1999, 'INR', 'en-IN')).toMatch(/₹\s?1,999/);
+    expect(formatPrice(3000, 'JPY', 'en-US')).toMatch(/¥3,000/);
+    expect(formatPrice(1999 / 12, 'INR', 'en-IN')).not.toContain('$');
+  });
   it('falls back for unknown currency codes', () => {
     expect(formatPrice(2.5, 'not-a-code')).toContain('2.50');
   });
@@ -163,5 +168,27 @@ describe('lifetime plan text', () => {
   it('says one-time, with no renewal', () => {
     expect(billingSummary(lifetime, now)).toBe('$49.99 one-time purchase, charged today. No subscription.');
     expect(cancellationNote(lifetime, now, 'App Store')).toMatch(/no renewal/);
+  });
+});
+
+describe('localised plan maths', () => {
+  const plan = (kind: 'monthly' | 'yearly', price: number, currencyCode: string): Plan => ({ id: kind, kind, priceString: '', price, currencyCode, trialDays: null });
+  it('uses the real local prices: India', () => {
+    const m = plan('monthly', 299, 'INR');
+    const y = plan('yearly', 1999, 'INR');
+    expect(yearlySavingsPercent(m, y)).toBe(44);
+    expect(yearlySavingsAmount(m, y)).toBe(1589);
+  });
+  it('uses the real local prices: Japan, no decimals', () => {
+    const m = plan('monthly', 600, 'JPY');
+    const y = plan('yearly', 3000, 'JPY');
+    expect(yearlySavingsPercent(m, y)).toBe(58);
+    expect(yearlySavingsAmount(m, y)).toBe(4200);
+    expect(pricePerMonth(y)).toBe(250);
+  });
+  it('shows no saving when yearly is not cheaper', () => {
+    const m = plan('monthly', 100, 'USD');
+    expect(yearlySavingsPercent(m, plan('yearly', 1200, 'USD'))).toBeNull();
+    expect(yearlySavingsAmount(m, plan('yearly', 1300, 'USD'))).toBeNull();
   });
 });

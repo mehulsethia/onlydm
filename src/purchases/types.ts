@@ -37,6 +37,8 @@ export interface PaymentsProvider {
   getState(): Promise<CustomerState>;
   purchase(planId: string): Promise<PurchaseResult>;
   restore(): Promise<CustomerState>;
+  /** Opens the store's own offer-code redemption sheet, then returns the refreshed state. Absent where unsupported. */
+  redeemCode?(): Promise<CustomerState>;
   /** The id this install is known by in the store backend, for support (null when there is none). */
   getSupportId(): Promise<string | null>;
   onChange(listener: (state: CustomerState) => void): () => void;

@@ -15,6 +15,8 @@ interface PaymentsValue {
   loadPlans: () => Promise<void>;
   purchase: (planId: string) => Promise<'purchased' | 'cancelled' | 'failed'>;
   restore: () => Promise<boolean>;
+  /** Null when the store has no code redemption. */
+  redeemCode: (() => Promise<boolean>) | null;
   getSupportId: () => Promise<string | null>;
 }
 
@@ -84,11 +86,24 @@ export function PaymentsProvider({ children }: { children: ReactNode }) {
     }
   }, []);
 
+  const redeem = provider.redeemCode?.bind(provider);
+  const redeemCode = useCallback(async () => {
+    setError(null);
+    try {
+      const s = await redeem!();
+      setCustomer(s);
+      return s.isPro;
+    } catch (e) {
+      setError(message(e));
+      return false;
+    }
+  }, [redeem]);
+
   const getSupportId = useCallback(() => provider.getSupportId().catch(() => null), []);
 
   const value = useMemo<PaymentsValue>(
-    () => ({ mode: provider.mode, ready, plans, plansError, customer, isPro: customer.isPro, busy, error, loadPlans, purchase, restore, getSupportId }),
-    [ready, plans, plansError, customer, busy, error, loadPlans, purchase, restore, getSupportId],
+    () => ({ mode: provider.mode, ready, plans, plansError, customer, isPro: customer.isPro, busy, error, loadPlans, purchase, restore, redeemCode: redeem ? redeemCode : null, getSupportId }),
+    [ready, plans, plansError, customer, busy, error, loadPlans, purchase, restore, redeem, redeemCode, getSupportId],
   );
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }

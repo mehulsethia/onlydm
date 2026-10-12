@@ -2,7 +2,7 @@ import { NO_ACCESS, type CustomerState, type Plan, type PlanKind } from './types
 
 /** Pure helpers: mapping store data to plans, dates and disclosure text. No React, no native code. */
 
-export const ENTITLEMENT_ID = 'pro';
+export const ENTITLEMENT_ID = 'onlydm_pro';
 
 /** Minimal structural shapes of the RevenueCat objects we read, so this stays testable. */
 export interface PackageLike {

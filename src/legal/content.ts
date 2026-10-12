@@ -132,7 +132,8 @@ export const LEGAL_DOCS: Record<LegalDocId, LegalDoc> = {
         paragraphs: ['OnlyDM is a paid app with auto-renewable subscriptions, billed and managed by Apple or Google through your store account.'],
         bullets: [
           'Monthly: $3.99 a month (₹299 in India).',
-          'Yearly: $14.99 a year (₹999 in India), with a 7-day free trial for new subscribers.',
+          'Yearly: $19.99 a year (₹999 in India), with a 7-day free trial for new subscribers.',
+          'Lifetime: $49.99 once (₹4,999 in India), a one-time purchase with no renewal.',
           'Prices are shown in your local currency before you buy and may differ by country.',
           'With a free trial you are charged when it ends, unless you cancel before.',
           'All plans renew automatically until cancelled. Cancellation takes effect at the end of the current billing period. Deleting the app does not cancel a subscription.',

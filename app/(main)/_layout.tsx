@@ -6,7 +6,7 @@ import { usePayments } from '@/purchases/PaymentsProvider';
 export default function MainLayout() {
   const { ready, isPro } = usePayments();
 
-  // Entitlement "pro" gates the inbox once the paywall is switched on.
+  // Entitlement "onlydm_pro" gates the inbox once the paywall is switched on.
   if (FEATURES.paywall && ready && !isPro) return <Redirect href="/paywall" />;
   if (FEATURES.paywall && !ready) return <FullScreenLoader />;
 

@@ -28,7 +28,8 @@ export default function Terms() {
       <p>OnlyDM is a paid app with auto-renewable subscriptions, billed and managed by Apple or Google through your store account:</p>
       <ul>
         <li>Monthly: $3.99 a month (₹299 in India).</li>
-        <li>Yearly: $14.99 a year (₹999 in India), with a {site.trialDays}-day free trial for new subscribers.</li>
+        <li>Yearly: $19.99 a year (₹999 in India), with a {site.trialDays}-day free trial for new subscribers.</li>
+        <li>Lifetime: $49.99 once (₹4,999 in India), a one-time purchase with no renewal.</li>
         <li>
           Prices are shown in your local currency before you buy and may differ by country. With a free trial you are
           charged when it ends, unless you cancel before.

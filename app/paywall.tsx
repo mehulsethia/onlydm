@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { Pressable, View } from 'react-native';
+import { Platform, Pressable, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { AnimatedHeadline } from '@/components/AnimatedHeadline';
 import { AppText } from '@/components/AppText';
@@ -151,7 +151,7 @@ function PlanCard({
 export default function Paywall() {
   const router = useRouter();
   const b = useBreakdown();
-  const { mode, plans, plansError, loadPlans, purchase, restore, busy, error, isPro } = usePayments();
+  const { mode, plans, plansError, loadPlans, purchase, restore, redeemCode, busy, error, isPro } = usePayments();
   const [selected, setSelected] = useState<string | null>(null);
   const now = useMemo(() => new Date(), []);
   const proof = socialProof();
@@ -202,6 +202,9 @@ export default function Paywall() {
   };
   const doRestore = async () => {
     if (await restore()) finish();
+  };
+  const doRedeem = async () => {
+    if (await redeemCode?.()) finish();
   };
   const openDoc = (doc: LegalDocId) => router.push({ pathname: '/legal/[doc]', params: { doc } });
 
@@ -314,10 +317,17 @@ export default function Paywall() {
             </View>
           ))}
 
-          <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
-            <AppText variant="caption" muted>Cancel anytime · </AppText>
-            <FooterLink label="How to cancel" onPress={() => openDoc('cancel')} />
-          </View>
+          {plan?.kind !== 'lifetime' && (
+            <View style={{ flexDirection: 'row', justifyContent: 'center', flexWrap: 'wrap', alignItems: 'center' }}>
+              <AppText variant="caption" muted>Cancel anytime · </AppText>
+              <FooterLink label="How to cancel" onPress={() => openDoc('cancel')} />
+            </View>
+          )}
+          {redeemCode && mode === 'live' && Platform.OS === 'ios' ? (
+            <View style={{ alignItems: 'center' }}>
+              <FooterLink label="Have a code?" role="button" onPress={doRedeem} disabled={busy} />
+            </View>
+          ) : null}
         </View>
       }
     >
