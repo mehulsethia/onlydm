@@ -52,6 +52,26 @@ export function mapPackage(pkg: PackageLike): Plan | null {
   };
 }
 
+/** Trials are only promised to users the store says are eligible; anyone else sees the plain price. */
+export function withTrialEligibility(plans: Plan[], eligibleIds: ReadonlySet<string>): Plan[] {
+  return plans.map((p) => (p.trialDays && !eligibleIds.has(p.id) ? { ...p, trialDays: null } : p));
+}
+
+/** "1-week" for the button, "1 week" for sentences. Built from the store's trial length. */
+export function trialDuration(days: number): { adjective: string; phrase: string } {
+  const unit = (n: number, word: string) => ({ adjective: `${n}-${word}`, phrase: `${n} ${word}${n === 1 ? '' : 's'}` });
+  if (days % 365 === 0) return unit(days / 365, 'year');
+  if (days % 30 === 0 && days < 365) return unit(days / 30, 'month');
+  if (days % 7 === 0) return unit(days / 7, 'week');
+  return unit(days, 'day');
+}
+
+/** Fine print while a trial applies: no "charged today", the trial length and what follows. */
+export function trialFinePrint(plan: Plan, store: 'App Store' | 'Google Play'): string {
+  const where = store === 'App Store' ? 'Apple ID settings' : 'the Play Store';
+  return `${trialDuration(plan.trialDays ?? 0).phrase} free, then ${plan.priceString}/${periodWord(plan.kind)}. Cancel anytime in ${where}.`;
+}
+
 const ORDER: Record<PlanKind, number> = { yearly: 0, monthly: 1, lifetime: 2 };
 
 /** Yearly first, as the default choice; then monthly; lifetime last. */

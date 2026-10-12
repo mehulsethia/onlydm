@@ -1,5 +1,5 @@
-import Purchases, { LOG_LEVEL, type PurchasesPackage } from 'react-native-purchases';
-import { customerStateFrom, mapPackages } from './plans';
+import Purchases, { INTRO_ELIGIBILITY_STATUS, LOG_LEVEL, type PurchasesPackage } from 'react-native-purchases';
+import { customerStateFrom, mapPackages, withTrialEligibility } from './plans';
 import type { CustomerState, PaymentsProvider, Plan, PurchaseResult } from './types';
 
 /** RevenueCat-backed provider: Apple/Google in-app purchase, receipts validated by RevenueCat. No backend of ours. */
@@ -28,7 +28,21 @@ export function createRevenueCatProvider(apiKey: string): PaymentsProvider {
     mode: 'live',
 
     async getPlans(): Promise<Plan[]> {
-      return mapPackages(await loadPackages());
+      const available = await loadPackages();
+      const plans = mapPackages(available);
+      // Only promise a trial to users the store says can still have it. Unknown or failed checks show no trial.
+      const trialIds = plans.filter((p) => p.trialDays).map((p) => packages.get(p.id)?.product.identifier).filter((id): id is string => !!id);
+      const eligible = new Set<string>();
+      if (trialIds.length) {
+        try {
+          const result = await Purchases.checkTrialOrIntroductoryPriceEligibility(trialIds);
+          for (const p of plans) {
+            const productId = packages.get(p.id)?.product.identifier;
+            if (productId && result[productId]?.status === INTRO_ELIGIBILITY_STATUS.INTRO_ELIGIBILITY_STATUS_ELIGIBLE) eligible.add(p.id);
+          }
+        } catch {}
+      }
+      return withTrialEligibility(plans, eligible);
     },
 
     async getState(): Promise<CustomerState> {

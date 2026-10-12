@@ -26,6 +26,8 @@ import {
   pricePerMonth,
   STORE,
   trialEndDate,
+  trialDuration,
+  trialFinePrint,
   yearlySavingsAmount,
   yearlySavingsPercent,
   type Plan,
@@ -209,8 +211,8 @@ export default function Paywall() {
   const openDoc = (doc: LegalDocId) => router.push({ pathname: '/legal/[doc]', params: { doc } });
 
   const firstCharge = plan
-    ? trialDays && billingDate
-      ? `${plan.priceString} per ${periodWord(plan.kind)}, first charged on ${billingDate}.`
+    ? trialDays
+      ? trialFinePrint(plan, STORE)
       : billingSummary(plan, now)
     : null;
 
@@ -241,7 +243,7 @@ export default function Paywall() {
           {mode === 'dev' ? (
             <Button label="Continue" onPress={finish} />
           ) : (
-            <Button label={trialDays ? `Start ${trialDays} days free` : plan?.kind === 'lifetime' ? 'Buy lifetime access' : 'Subscribe'} onPress={buy} disabled={!plan || busy} />
+            <Button label={trialDays ? `Start ${trialDuration(trialDays).adjective} free trial` : plan?.kind === 'lifetime' ? 'Buy lifetime access' : 'Subscribe'} onPress={buy} disabled={!plan || busy} />
           )}
           {firstCharge && (
             <AppText variant="small" center accessibilityLiveRegion="polite">

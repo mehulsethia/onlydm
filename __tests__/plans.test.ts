@@ -10,6 +10,9 @@ import {
   yearlySavingsPercent,
   yearlySavingsAmount,
   pricePerMonth,
+  withTrialEligibility,
+  trialDuration,
+  trialFinePrint,
   type PackageLike,
 } from '../src/purchases/plans';
 import { NO_ACCESS, type Plan } from '../src/purchases/types';
@@ -190,5 +193,24 @@ describe('localised plan maths', () => {
     const m = plan('monthly', 100, 'USD');
     expect(yearlySavingsPercent(m, plan('yearly', 1200, 'USD'))).toBeNull();
     expect(yearlySavingsAmount(m, plan('yearly', 1300, 'USD'))).toBeNull();
+  });
+});
+
+describe('trial eligibility and wording', () => {
+  const y: Plan = { id: 'y', kind: 'yearly', priceString: '₹999.00', price: 999, currencyCode: 'INR', trialDays: 7 };
+  const m: Plan = { id: 'm', kind: 'monthly', priceString: '₹299.00', price: 299, currencyCode: 'INR', trialDays: null };
+  it('keeps the trial only for eligible plans', () => {
+    expect(withTrialEligibility([y, m], new Set(['y']))[0].trialDays).toBe(7);
+    expect(withTrialEligibility([y, m], new Set())[0].trialDays).toBeNull();
+    expect(withTrialEligibility([y, m], new Set())[1]).toEqual(m);
+  });
+  it('builds the duration from the store trial length', () => {
+    expect(trialDuration(7)).toEqual({ adjective: '1-week', phrase: '1 week' });
+    expect(trialDuration(14)).toEqual({ adjective: '2-week', phrase: '2 weeks' });
+    expect(trialDuration(30).phrase).toBe('1 month');
+    expect(trialDuration(3).adjective).toBe('3-day');
+  });
+  it('fine print has the trial, then the price, and no "charged today"', () => {
+    expect(trialFinePrint(y, 'App Store')).toBe('1 week free, then ₹999.00/year. Cancel anytime in Apple ID settings.');
   });
 });
