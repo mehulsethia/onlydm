@@ -11,6 +11,7 @@ import { Loader } from '@/components/Loader';
 import { Screen } from '@/components/Screen';
 import { socialProof } from '@/config/socialProof';
 import type { LegalDocId } from '@/legal/content';
+import { offerReminders } from '@/notifications/reminders';
 import { scheduleTrialReminder } from '@/notifications/trialReminder';
 import { trialTimeline } from '@/notifications/timeline';
 import { formatDaysCaps } from '@/onboarding/maths';
@@ -185,6 +186,7 @@ export default function Paywall() {
   const finish = () => {
     markOnboardingComplete();
     router.replace('/(main)/inbox');
+    offerReminders();
   };
   // Already subscribed (for example after restoring on a new device): nothing to buy.
   useEffect(() => {

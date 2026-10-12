@@ -49,3 +49,4 @@ example
 .next/
 out/
 next-env.d.ts
+/build

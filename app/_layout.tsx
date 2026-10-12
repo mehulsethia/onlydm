@@ -9,6 +9,7 @@ import { Inter_400Regular, Inter_500Medium, Inter_600SemiBold, Inter_700Bold, In
 import { Nunito_600SemiBold, Nunito_800ExtraBold } from '@expo-google-fonts/nunito';
 import { GeistMono_400Regular, GeistMono_500Medium, GeistMono_700Bold } from '@expo-google-fonts/geist-mono';
 import { Backdrop } from '@/components/Backdrop';
+import { syncReminders } from '@/notifications/reminders';
 import { PaymentsProvider } from '@/purchases/PaymentsProvider';
 import { colors } from '@/theme/tokens';
 
@@ -36,6 +37,11 @@ export default function RootLayout() {
     GeistMono_500Medium,
     GeistMono_700Bold,
   });
+
+  // Keep the daily reminders matching the saved settings (and rotate their wording) on every launch.
+  useEffect(() => {
+    void syncReminders();
+  }, []);
 
   useEffect(() => {
     if (loaded || error) SplashScreen.hideAsync();

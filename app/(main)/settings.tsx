@@ -12,6 +12,9 @@ import { Screen } from '@/components/Screen';
 import { CONTACT_EMAIL, CONTACT_URL } from '@/config/links';
 import type { LegalDocId } from '@/legal/content';
 import { FEATURE_LOCK_INSTAGRAM_APP } from '@/lock/flag';
+import { cancelReminders, disableReminders, enableReminders, syncReminders } from '@/notifications/reminders';
+import { formatClock, nudgeTime, TIME_STEP } from '@/notifications/reminderPlan';
+import { readReminders, saveReminderTimes } from '@/state/reminders';
 import { cancelTrialReminder } from '@/notifications/trialReminder';
 import { formatDate, MANAGE_SUBSCRIPTIONS_URL } from '@/purchases';
 import { usePayments } from '@/purchases/PaymentsProvider';
@@ -90,6 +93,31 @@ function Row({
   );
 }
 
+/** A time of day with 30-minute steps. */
+function TimeRow({ label, minutes, onNudge, last }: { label: string; minutes: number; onNudge: (delta: number) => void; last?: boolean }) {
+  const step = (sign: 1 | -1, text: string, name: string) => (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`${name}, ${label}`}
+      onPress={() => onNudge(sign * TIME_STEP)}
+      hitSlop={4}
+      style={({ pressed }) => ({ width: sizes.touch, height: sizes.touch, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1, borderColor: colors.text, opacity: pressed ? 0.6 : 1 })}
+    >
+      <AppText variant="bodyMedium">{text}</AppText>
+    </Pressable>
+  );
+  return (
+    <View style={{ minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.hairline }}>
+      <View style={{ flex: 1 }}>
+        <AppText variant="bodyMedium">{label}</AppText>
+        <AppText variant="small" muted style={{ fontVariant: ['tabular-nums'] }}>{formatClock(minutes)}</AppText>
+      </View>
+      {step(-1, '−', 'Earlier')}
+      {step(1, '+', 'Later')}
+    </View>
+  );
+}
+
 function Section({ title, children }: { title: string; children: React.ReactNode }) {
   return (
     <View style={{ gap: spacing.sm }}>
@@ -110,6 +138,27 @@ export default function Settings() {
   }, [getSupportId]);
   const [connected, setConnected] = useState(connectedPlatforms);
   useFocusEffect(useCallback(() => setConnected(connectedPlatforms()), []));
+
+  const [reminders, setReminders] = useState(readReminders);
+  const [reminderNote, setReminderNote] = useState<string | null>(null);
+  const toggleReminders = async () => {
+    if (reminders.enabled) {
+      await disableReminders();
+      setReminderNote(null);
+    } else {
+      const ok = await enableReminders();
+      setReminderNote(ok ? null : 'Notifications are off for OnlyDM. Turn them on in iOS Settings, then try again.');
+    }
+    setReminders(readReminders());
+  };
+  const nudge = (index: 0 | 1, delta: number) => {
+    const next = nudgeTime(reminders.times, index, delta);
+    if (next === reminders.times) return setReminderNote('Keep the two reminders at least 8 hours apart.');
+    setReminderNote(null);
+    saveReminderTimes(next);
+    setReminders(readReminders());
+    void syncReminders();
+  };
 
   const status = (() => {
     if (!customer.isPro) return 'Not subscribed';
@@ -172,6 +221,7 @@ export default function Settings() {
             emitWebEvent('clear');
             clearProgress();
             cancelTrialReminder();
+            cancelReminders();
             router.dismissAll();
             router.replace('/');
           },
@@ -198,6 +248,21 @@ export default function Settings() {
               {note}
             </AppText>
           )}
+        </Section>
+
+        <Section title="Reminders">
+          <Row label="Daily reminders" detail={reminders.enabled ? 'On. We nudge you twice a day to check your DMs.' : 'Off'} onPress={toggleReminders} last={!reminders.enabled && !reminderNote} />
+          {reminders.enabled ? (
+            <>
+              <TimeRow label="First reminder" minutes={reminders.times[0]} onNudge={(d) => nudge(0, d)} />
+              <TimeRow label="Second reminder" minutes={reminders.times[1]} onNudge={(d) => nudge(1, d)} last={!reminderNote} />
+            </>
+          ) : null}
+          {reminderNote ? (
+            <View style={{ padding: spacing.md }}>
+              <AppText variant="small" muted accessibilityLiveRegion="polite">{reminderNote}</AppText>
+            </View>
+          ) : null}
         </Section>
 
         <Section title="Instagram">

@@ -52,7 +52,9 @@
     "web": "expo start --web",
     "lint": "expo lint",
     "test": "jest",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "build:ios": "npx eas-cli build --platform ios --profile production --local --output build/OnlyDM.ipa",
+    "submit:ios": "npx eas-cli submit --platform ios --profile production --path build/OnlyDM.ipa"
   },
   "private": true
 }
