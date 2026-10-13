@@ -10,6 +10,7 @@ export const ONBOARDING_STEPS = [
   'trust',
   'login',
   'reveal',
+  'reminders',
   'paywall',
 ] as const;
 

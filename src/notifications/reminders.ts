@@ -1,8 +1,8 @@
-import { Alert, Platform } from 'react-native';
+import { Platform } from 'react-native';
 import * as Notifications from 'expo-notifications';
 import { readProgress } from '@/state/progress';
 import { readReminders, saveRemindersEnabled } from '@/state/reminders';
-import { formatClock, reminderCopy } from './reminderPlan';
+import { reminderCopy } from './reminderPlan';
 
 /**
  * Two daily "check your DMs" nudges. Local notifications scheduled on the phone: OnlyDM never reads messages,
@@ -63,18 +63,4 @@ export async function enableReminders(): Promise<boolean> {
 export async function disableReminders() {
   saveRemindersEnabled(false);
   await cancelReminders();
-}
-
-/** First finish of onboarding: explain, then ask. Asked once only; Settings has the switch after that. */
-export function offerReminders() {
-  if (readReminders().enabled !== null) return;
-  const { times } = readReminders();
-  Alert.alert(
-    'Daily reminders',
-    `OnlyDM can't see your messages, so it can't tell you when one arrives. Want a nudge at ${formatClock(times[0])} and ${formatClock(times[1])} to check in? You can change the times in Settings.`,
-    [
-      { text: 'Not now', style: 'cancel', onPress: () => saveRemindersEnabled(false) },
-      { text: 'Turn on', onPress: () => void enableReminders() },
-    ],
-  );
 }

@@ -11,9 +11,9 @@ import { Wordmark } from '@/components/Wordmark';
 import { Screen } from '@/components/Screen';
 import { CONTACT_EMAIL, CONTACT_URL } from '@/config/links';
 import type { LegalDocId } from '@/legal/content';
-import { FEATURE_LOCK_INSTAGRAM_APP } from '@/lock/flag';
 import { cancelReminders, disableReminders, enableReminders, syncReminders } from '@/notifications/reminders';
-import { formatClock, nudgeTime, TIME_STEP } from '@/notifications/reminderPlan';
+import { nudgeTime } from '@/notifications/reminderPlan';
+import { ReminderTimeRow } from '@/components/ReminderTimeRow';
 import { readReminders, saveReminderTimes } from '@/state/reminders';
 import { cancelTrialReminder } from '@/notifications/trialReminder';
 import { formatDate, MANAGE_SUBSCRIPTIONS_URL } from '@/purchases';
@@ -90,31 +90,6 @@ function Row({
         </Pressable>
       ) : null}
     </Pressable>
-  );
-}
-
-/** A time of day with 30-minute steps. */
-function TimeRow({ label, minutes, onNudge, last }: { label: string; minutes: number; onNudge: (delta: number) => void; last?: boolean }) {
-  const step = (sign: 1 | -1, text: string, name: string) => (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel={`${name}, ${label}`}
-      onPress={() => onNudge(sign * TIME_STEP)}
-      hitSlop={4}
-      style={({ pressed }) => ({ width: sizes.touch, height: sizes.touch, alignItems: 'center', justifyContent: 'center', borderRadius: radius.pill, borderWidth: 1, borderColor: colors.text, opacity: pressed ? 0.6 : 1 })}
-    >
-      <AppText variant="bodyMedium">{text}</AppText>
-    </Pressable>
-  );
-  return (
-    <View style={{ minHeight: 60, flexDirection: 'row', alignItems: 'center', gap: spacing.sm, paddingHorizontal: spacing.md, paddingVertical: spacing.sm, borderBottomWidth: last ? 0 : 1, borderBottomColor: colors.hairline }}>
-      <View style={{ flex: 1 }}>
-        <AppText variant="bodyMedium">{label}</AppText>
-        <AppText variant="small" muted style={{ fontVariant: ['tabular-nums'] }}>{formatClock(minutes)}</AppText>
-      </View>
-      {step(-1, '−', 'Earlier')}
-      {step(1, '+', 'Later')}
-    </View>
   );
 }
 
@@ -254,8 +229,8 @@ export default function Settings() {
           <Row label="Daily reminders" detail={reminders.enabled ? 'On. We nudge you twice a day to check your DMs.' : 'Off'} onPress={toggleReminders} last={!reminders.enabled && !reminderNote} />
           {reminders.enabled ? (
             <>
-              <TimeRow label="First reminder" minutes={reminders.times[0]} onNudge={(d) => nudge(0, d)} />
-              <TimeRow label="Second reminder" minutes={reminders.times[1]} onNudge={(d) => nudge(1, d)} last={!reminderNote} />
+              <ReminderTimeRow label="First reminder" minutes={reminders.times[0]} onNudge={(d) => nudge(0, d)} />
+              <ReminderTimeRow label="Second reminder" minutes={reminders.times[1]} onNudge={(d) => nudge(1, d)} last={!reminderNote} />
             </>
           ) : null}
           {reminderNote ? (
@@ -276,10 +251,6 @@ export default function Settings() {
         <Section title="Show">
           <Row label="Reload current page" onPress={() => { emitWebEvent('reload'); router.back(); }} />
           <Row label="Sign out of everything" detail="Disconnects all accounts and starts over" tone="removedOnDark" onPress={signOut} last />
-        </Section>
-
-        <Section title="Coming later">
-          <Row label="Lock the Instagram app" detail="Use Screen Time to block the Instagram app, with two 5-minute passes a day." disabled={!FEATURE_LOCK_INSTAGRAM_APP} last />
         </Section>
 
         <Section title="Privacy, terms and contact">

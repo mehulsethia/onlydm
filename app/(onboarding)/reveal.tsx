@@ -7,11 +7,9 @@ import { Button } from '@/components/Button';
 import { GlassIconButton } from '@/components/GlassIconButton';
 import { BackIcon } from '@/components/Icons';
 import { PlatformWebView } from '@/components/PlatformWebView';
-import { FEATURES } from '@/config/features';
 import { success } from '@/motion/haptics';
 import { getPack } from '@/rules/store';
 import { getActivePlatform } from '@/state/platforms';
-import { markOnboardingComplete } from '@/state/progress';
 import { colors, motion, radius, sizes, spacing } from '@/theme/tokens';
 import { useLayout } from '@/theme/useLayout';
 
@@ -29,12 +27,7 @@ export default function Reveal() {
 
   const keep = () => {
     success();
-    if (FEATURES.paywall) {
-      router.push('/paywall');
-    } else {
-      markOnboardingComplete();
-      router.replace('/(main)/inbox');
-    }
+    router.push('/(onboarding)/reminders');
   };
 
   const entering = reduce
